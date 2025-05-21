@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store'
 
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const data:any = [
   { name: 'Jan', value: 200 },
   { name: 'Feb', value: 250 },
@@ -16,7 +16,7 @@ const data:any = [
   { name: 'May', value: 600 },
   { name: 'Jun', value: 800 },
 ];
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const milesData:any = [
   { name: 'Jan', value: 8500 },
   { name: 'Feb', value: 9200 },

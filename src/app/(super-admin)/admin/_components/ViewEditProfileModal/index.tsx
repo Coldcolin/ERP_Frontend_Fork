@@ -54,7 +54,7 @@ interface ViewEditProfileModalProps {
     console.log("Updated user data:", data)
     setIsEditing(false)
   }
-
+  
   useEffect(() => {
     if (user) {
       form.reset({
@@ -66,8 +66,10 @@ interface ViewEditProfileModalProps {
       });
       setIsEditing(user.isEditing || false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, form.reset]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditClick = (e:any) => {
     e.preventDefault();
     setIsEditing(true);

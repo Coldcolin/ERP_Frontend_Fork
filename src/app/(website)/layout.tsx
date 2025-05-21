@@ -1,14 +1,14 @@
 
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 // import "./globals.css";
 // Google Fonts support
 
-const primaryFont = Inter({
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-primary',
-});
+// const primaryFont = Inter({
+//   display: 'swap',
+//   subsets: ['latin'],
+//   variable: '--font-primary',
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",

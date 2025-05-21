@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import MainRoot from "./_components/layout/MainRoot";
 import {
-  UsersRound,
   Car,
   UserCog,
   Settings,
@@ -72,11 +71,11 @@ const navigations: Navigation[] = [
   },
 ];
 
-const primaryFont = Inter({
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-primary',
-});
+// const primaryFont = Inter({
+//   display: 'swap',
+//   subsets: ['latin'],
+//   variable: '--font-primary',
+// });
 
 
 export const metadata: Metadata = {

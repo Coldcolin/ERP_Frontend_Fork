@@ -32,7 +32,8 @@ export default function DriverManagement() {
             <thead className="bg-black text-white">
               <tr>
                 <th className="px-4 py-3 text-left font-medium">Photo</th>
-                <th className="px-4 py-3 text-left font-medium">Driver's name</th>
+                
+                <th className="px-4 py-3 text-left font-medium">Driver&apos;s name</th>
                 <th className="px-4 py-3 text-left font-medium">License No</th>
                 <th className="px-4 py-3 text-left font-medium">License Expiry</th>
                 <th className="px-4 py-3 text-left font-medium">Phone No</th>

@@ -4,10 +4,7 @@ import {
   Search,
   Filter,
   MoreVertical,
-  PlusIcon,
-  Table,
-  Trash,
-
+  PlusIcon
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,8 +17,9 @@ import TableOptions from '@/components/app/TableOptions'
 import  ViewEditProfileModal  from './_components/ViewEditProfileModal'
 import { User,UserRoundPen ,Key, CloudDownload, Trash2  } from 'lucide-react';
 import DeleteConfirmatioNodal from '@/components/app/DeleteConfirmatioNodal'
-import { useSelector } from 'react-redux'
+// import { useSelector } from 'react-redux'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const users: any = [
   {
     id: 1,
@@ -103,10 +101,12 @@ const users: any = [
 ]
 const Admin = () => {
 const [isModalOpen, setIsModalOpen] = React.useState(false);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const [selectedUser, setSelectedUser] = React.useState<any>(null);
 const [isDialogOpen, setIsDialogOpen] = useState(false) 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const [userToDelete, setUserToDelete] = useState<any>(null) 
-const isAuthenticated = useSelector((state: any) => state?.auth?.user)
+// const isAuthenticated = useSelector((state: any) => state?.auth?.user)
 
 const handleDeleteUser = () => {
   if (userToDelete) {
@@ -118,10 +118,10 @@ const handleDeleteUser = () => {
   }
 }
 
-const handleViewProfile = (user: any) => {
-  setSelectedUser(user)
-  setIsModalOpen(true)
-}
+// const handleViewProfile = (user: any) => {
+//   setSelectedUser(user)
+//   setIsModalOpen(true)
+// }
   return (
   <div>
     <main className="flex-1">
@@ -216,7 +216,9 @@ const handleViewProfile = (user: any) => {
                   <div className="col-span-1">Actions</div>
                 </div>
                 <div className="divide-y">
-                  {users.map((user:any) => (
+                  {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  users.map((user:any) => (
                     <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
                       <div className="col-span-4 flex items-center gap-3">
                       <Avatar>
@@ -305,9 +307,9 @@ const handleViewProfile = (user: any) => {
                   <div className="col-span-1">Actions</div>
                 </div>
                 <div className="divide-y">
-                  {users
-                    .filter((user:any) => user.status === "Active")
-                    .map((user:any) => (
+                  {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  users.filter((user:any) => user.status === "Active").map((user:any) => (
                       <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
                         <div className="col-span-4 flex items-center gap-3">
                         <Avatar>
@@ -345,9 +347,9 @@ const handleViewProfile = (user: any) => {
                   <div className="col-span-1">Actions</div>
                 </div>
                 <div className="divide-y">
-                  {users
-                    .filter((user:any) => user.status === "Inactive")
-                    .map((user:any) => (
+                  {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  users.filter((user:any) => user.status === "Inactive").map((user:any) => (
                       <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
                         <div className="col-span-4 flex items-center gap-3">
                         <Avatar>

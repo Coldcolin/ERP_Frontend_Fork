@@ -1,7 +1,7 @@
 
 import { StaticImageData } from 'next/image';
 import { RootSidebarDesktop, RootSidebarMobile } from '../RootSideBar';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 
 
@@ -24,6 +24,7 @@ export type ProductInfoSwitchProps = {
 
 type ProductRootProps = {
     children: React.ReactNode;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     navigation: any;
   
 };

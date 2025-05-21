@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import UserDropdown from '@/components/app/UserDropDown';
+// import UserDropdown from '@/components/app/UserDropDown';
 import { MessageCircle,Plus  } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AddVehicleModal } from '../../AddVechicleModal';
@@ -21,8 +21,7 @@ type RootSidebarDesktopProps = {
 };
 
 const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
-  navigation,
-  adminNav,
+  navigation
 }) => {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);

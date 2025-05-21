@@ -1,7 +1,7 @@
 "use client"
 import UserDropdown from '@/components/app/UserDropDown'
 import { Input } from '@/components/ui/input'
-import { Badge, Bell, HelpCircle, Search } from 'lucide-react'
+import { Bell, HelpCircle, Search } from 'lucide-react'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store'

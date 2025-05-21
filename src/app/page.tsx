@@ -14,7 +14,9 @@ export default function Dashboard() {
   const [selectedModule, setSelectedModule] = useState("")
   const [showUnavailable, setShowUnavailable] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isAuthenticated = useSelector((state: any) => state.auth.token)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isUser = useSelector((state: any) => state.auth.user)
   
   console.log("Get Started clicked", isAuthenticated)

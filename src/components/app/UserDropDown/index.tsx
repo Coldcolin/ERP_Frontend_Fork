@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
     position?: 'top' | 'bottom'; 
     className?: string;
   }
-function UserDropdown({ userName, avatarFallback, email = "admin@dreamworks.com", position = 'top' , className }: AdminDropdownProps) {
+function UserDropdown({ userName, avatarFallback, position = 'top' , className }: AdminDropdownProps) {
     const [isOpen, setIsOpen] = useState(false)
     const dispatch = useDispatch();
     const router = useRouter();
