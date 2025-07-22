@@ -8,6 +8,22 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {useGetAllDriverQuery} from "@/lib/redux/api/driverApi"
 
+// Define a Driver type based on the properties used
+type Driver = {
+  _id: string;
+  photo?: string;
+  personalInfo?: {
+    name?: string;
+    licenseNo?: string;
+    licenseExpiry?: string;
+    contact?: string;
+  };
+  assignedVehicle?: {
+    plateNumber?: string;
+    status?: string;
+  };
+};
+
 export default function DriverManagement() {
     const router = useRouter();
     const {data: allDrivers, isLoading, isError}= useGetAllDriverQuery({})
@@ -29,7 +45,7 @@ export default function DriverManagement() {
       return <div>Loading...</div>;
     }
     if (isError) {
-      return <div>Error: "Error Loading Drivers" </div>;
+      return <div>Error: &quot;Error Loading Drivers&quot; </div>;
     }
   return (
     <div className="container mx-auto py-8 px-4">
@@ -68,17 +84,17 @@ export default function DriverManagement() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {allDrivers?.map((driver: any) => (
+              {allDrivers?.map((driver: Driver) => (
                 <tr key={driver._id} className="bg-gray-50">
                   <td className="px-4 py-3">
                     <Avatar>
                       <AvatarImage src={driver.photo || "/placeholder.svg"} alt={driver?.personalInfo?.name} />
-                      <AvatarFallback>{driver?.personalInfo?.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{driver?.personalInfo?.name?.charAt(0) ?? "-"}</AvatarFallback>
                     </Avatar>
                   </td>
                   <td className="px-4 py-3 font-medium">{driver?.personalInfo?.name}</td>
                   <td className="px-4 py-3">{driver?.personalInfo?.licenseNo}</td>
-                  <td className="px-4 py-3">{formatToYYYYMMDD(driver?.personalInfo?.licenseExpiry)}</td>
+                  <td className="px-4 py-3">{formatToYYYYMMDD(driver?.personalInfo?.licenseExpiry ?? "")}</td>
                   <td className="px-4 py-3">{driver?.personalInfo?.contact}</td>
                   <td className="px-4 py-3">
                     {driver?.assignedVehicle ? (
@@ -121,76 +137,3 @@ export default function DriverManagement() {
     </div>
   )
 }
-
-const drivers = [
-  {
-    id: 1,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "Cassandra Pearl",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: "NWUP01",
-    status: "active",
-  },
-  {
-    id: 2,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "John Doe",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: "NWUP01",
-    status: "active",
-  },
-  {
-    id: 3,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "James Aspen",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: null,
-    status: "inactive",
-  },
-  {
-    id: 4,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "Emmanuel Abel",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: "NWUP01",
-    status: "active",
-  },
-  {
-    id: 5,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "Leo Chukwu",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: null,
-    status: "inactive",
-  },
-  {
-    id: 6,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "Alhaji Kamoru",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: "NWUP01",
-    status: "inactive",
-  },
-  {
-    id: 7,
-    photo: "/placeholder.svg?height=40&width=40",
-    name: "Wilberforce Manel",
-    licenseNo: "B1234XYZ",
-    licenseExpiry: "Jan 4, 2025",
-    phoneNo: "0901418...",
-    assignedVehicle: "NWUP01",
-    status: "inactive",
-  },
-]

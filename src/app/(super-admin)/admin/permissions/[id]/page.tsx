@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react"
 import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useGetSingleUserQuery, useGrantPermissionsMutation } from "@/lib/redux/api/userApi"
 import { Spinner } from "@/components/ui/spinner"
@@ -105,9 +104,7 @@ const formatPermissionName = (permission: string): string => {
 };
 
 export default function UserManagementModule({ params }: UserManagementModuleProps) {
-  // Unwrap params using React.use() as required by newer versions of Next.js
-  const unwrappedParams = React.use(params);
-  const userId = (unwrappedParams as { id: string }).id;
+  const userId = params.id;
   const router = useRouter();
   
   // Fetch user data using the id from params
@@ -115,7 +112,7 @@ export default function UserManagementModule({ params }: UserManagementModulePro
   
   // Grant permissions mutation
   const [grantPermissions, { isLoading: isUpdating }] = useGrantPermissionsMutation();
-  
+  console.log(grantPermissions)
   // Initialize permissions state with all permissions set to false
   const [permissions, setPermissions] = useState<Record<string, boolean>>({});
 
@@ -133,13 +130,13 @@ export default function UserManagementModule({ params }: UserManagementModulePro
       const userPermissions: Record<string, boolean> = {};
       
       // Set all permissions to false initially
-      allPermissions.forEach(perm => {
+      allPermissions.forEach((perm: string) => {
         userPermissions[perm] = false;
       });
       
       // Set permissions from user data to true
       if (userData.user.permissions && Array.isArray(userData.user.permissions)) {
-        userData.user.permissions.forEach(perm => {
+        userData.user.permissions.forEach((perm: string) => {
           if (allPermissions.includes(perm)) {
             userPermissions[perm] = true;
           }
@@ -165,17 +162,17 @@ export default function UserManagementModule({ params }: UserManagementModulePro
   const handleUpdate = async () => {
     try {
       // Get the list of enabled permissions
-      const enabledPermissions = Object.entries(permissions)
-        .filter(([_, isEnabled]) => isEnabled)
-        .map(([permission]) => permission);
+      // const enabledPermissions = Object.entries(permissions)
+      //   .filter(([isEnabled]) => isEnabled)
+      //   .map(([permission]) => permission);
       
       // console.log(`Updating permissions for user ${userId}:`, enabledPermissions);
       
       // Call the API to update the user's permissions
-      const result = await grantPermissions({
-        id: userId,
-        permissions: enabledPermissions
-      }).unwrap();
+      // const result = await grantPermissions({
+      //   id: userId,
+      //   permissions: enabledPermissions
+      // }).unwrap();
       
       setUpdateStatus({
         success: true,
@@ -203,12 +200,12 @@ export default function UserManagementModule({ params }: UserManagementModulePro
       const userPermissions: Record<string, boolean> = {};
       
       // Reset all to false
-      allPermissions.forEach(perm => {
+      allPermissions.forEach((perm: string) => {
         userPermissions[perm] = false;
       });
       
       // Set user's permissions to true
-      userData.user.permissions.forEach(perm => {
+      userData.user.permissions.forEach((perm: string) => {
         if (allPermissions.includes(perm)) {
           userPermissions[perm] = true;
         }
@@ -246,23 +243,23 @@ export default function UserManagementModule({ params }: UserManagementModulePro
 
   // Group permissions by category for better organization
   const permissionCategories = {
-    "Fleet Management": allPermissions.filter(p => 
+    "Fleet Management": allPermissions.filter((p: string) => 
       p.includes("driver") || p.includes("vehicle") || p.includes("trip") || 
       p.includes("fleet") || p.includes("maintenance")
     ),
-    "Financial": allPermissions.filter(p => 
+    "Financial": allPermissions.filter((p: string) => 
       p.includes("invoice") || p.includes("financial") || p.includes("payroll") || 
       p.includes("budget") || p.includes("expenses") || p.includes("accounts")
     ),
-    "Logistics": allPermissions.filter(p => 
+    "Logistics": allPermissions.filter((p: string) => 
       p.includes("delivery") || p.includes("shipment") || p.includes("warehouse") || 
       p.includes("pickup") || p.includes("logistics")
     ),
-    "Customer Management": allPermissions.filter(p => 
+    "Customer Management": allPermissions.filter((p: string) => 
       p.includes("customer") || p.includes("sales") || p.includes("feedback") || 
       p.includes("quote") || p.includes("crm")
     ),
-    "Operations": allPermissions.filter(p => 
+    "Operations": allPermissions.filter((p: string) => 
       p.includes("job") || p.includes("document") || p.includes("operations") || 
       p.includes("pricing")
     ),

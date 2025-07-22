@@ -21,7 +21,7 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
   navigation
 }) => {
   const pathname = usePathname();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   const isAuthenticatedUser = useSelector((state: any) => state?.auth?.user)
   const router = useRouter();
 

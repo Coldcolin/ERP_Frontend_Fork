@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+// import { Label } from "@/components/ui/label"
 import { Upload, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useForm } from "react-hook-form"
@@ -115,11 +115,11 @@ const AddDriverModal = ({ open, onOpenChange }: AddDriverModalProps) => {
       onOpenChange(false)
       form.reset()
       setCurrentStep(1)
-    } catch (error:any) {
-        if (error?.data?.message) {
-            toast.error(error.data.message);
-          } else if (error?.message) {
-            toast.error(error.message);
+    } catch (error:unknown) {
+        if ((error as any)?.data?.message) {
+            toast.error((error as any).data.message);
+          } else if ((error as any)?.message) {
+            toast.error((error as any).message);
           } else {
             toast.error("Failed to add driver");
           }

@@ -33,7 +33,7 @@ type InviteUserFormValues = z.infer<typeof inviteUserSchema>
 export default function InviteUserPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
-  const [createUser, { isLoading: isUserLoading }] = useCreateUserMutation();
+  const [createUser] = useCreateUserMutation();
 
   const form = useForm<InviteUserFormValues>({
     resolver: zodResolver(inviteUserSchema),
@@ -59,9 +59,9 @@ export default function InviteUserPage() {
       form.reset(); 
       router.push('/admin');
       setIsLoading(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('API Error:', error);
-      toast.error(error.data?.message || error.message || 'Failed to invite user');
+      toast.error((error as any).data?.message || (error as any).message || 'Failed to invite user');
       setIsLoading(false);
     }
   }

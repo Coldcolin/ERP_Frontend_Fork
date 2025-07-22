@@ -9,23 +9,15 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
-type Certification = {
-  type: string;
-  documentPath: string;
-};
-
-
-
 type Props = {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 };
 
 export default function Component({ params }: Props) {
     // const router = useRouter();
     // const { id } = React.use(params);
-    const {data: driverInfo, isLoading}= useGetDriverDetailsQuery(params?.id);
+    // const {data: driverInfo, isLoading}= useGetDriverDetailsQuery(params?.id);
+    const { data: driverInfo, isLoading } = useGetDriverDetailsQuery(params.id);
     const driverCerts = driverInfo?.certifications || [];
     const vehicleCerts = driverInfo?.assignedVehicle?.certifications || [];
     const allDocs = [...driverCerts, ...vehicleCerts];

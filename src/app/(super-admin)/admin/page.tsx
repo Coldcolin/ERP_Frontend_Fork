@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import {
   Search,
   Filter,
-  MoreVertical,
   PlusIcon
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,22 +17,34 @@ import TableOptions from '@/components/app/TableOptions'
 import ViewEditProfileModal from './_components/ViewEditProfileModal'
 import { User, UserRoundPen, Key, CloudDownload, Trash2 } from 'lucide-react';
 import DeleteConfirmatioNodal from '@/components/app/DeleteConfirmatioNodal'
-import { useSelector } from 'react-redux'
 import { useGetAllUserQuery } from "@/lib/redux/api/userApi"
 import { Spinner } from "@/components/ui/spinner"
 import { Skeleton } from "@/components/ui/skeleton"
 
+// Define AppUser type based on properties used
+type AppUser = {
+  id: string;
+  _id?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  department?: string;
+  phoneNo?: string;
+  role?: string;
+  avatar?: string;
+  [key: string]: any;
+};
+
 const Admin = () => {
 const [isModalOpen, setIsModalOpen] = React.useState(false);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const [selectedUser, setSelectedUser] = React.useState<any>(null);
+const [selectedUser, setSelectedUser] = React.useState<AppUser | null>(null);
 const [isDialogOpen, setIsDialogOpen] = useState(false) 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const [userToDelete, setUserToDelete] = useState<any>(null) 
+const [userToDelete, setUserToDelete] = useState<AppUser | null>(null) 
 // const isAuthenticated = useSelector((state: any) => state?.auth?.user)
 const router = useRouter();
 
-const { data: users, error, isLoading } = useGetAllUserQuery({});
+const { data: users, isLoading } = useGetAllUserQuery({});
 
 console.log("user data",users)
 const handleDeleteUser = () => {
@@ -175,7 +186,7 @@ const handleDeleteUser = () => {
                   </div>
                 ) : (
                   <div className="divide-y">
-                    {users?.users?.map((user:any) => (
+                    {users?.users?.map((user: AppUser) => (
                       <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
                         <div className="col-span-4 flex items-center gap-3">
                         <Avatar>
@@ -306,8 +317,8 @@ const handleDeleteUser = () => {
                 ) : (
                   <div className="divide-y">
                     {users?.users
-                      ?.filter((user:any) => user.isActive === true)
-                      ?.map((user:any) => (
+                      ?.filter((user: AppUser) => user.isActive === true)
+                      ?.map((user: AppUser) => (
                         <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
                           <div className="col-span-4 flex items-center gap-3">
                           <Avatar>
@@ -424,8 +435,8 @@ const handleDeleteUser = () => {
                 ) : (
                   <div className="divide-y">
                     {users?.users
-                      ?.filter((user:any) => user.isActive === false)
-                      ?.map((user:any) => (
+                      ?.filter((user: AppUser) => user.isActive === false)
+                      ?.map((user: AppUser) => (
                         <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
                           <div className="col-span-4 flex items-center gap-3">
                           <Avatar>
@@ -506,7 +517,7 @@ const handleDeleteUser = () => {
       </main>
       {selectedUser && (
         <ViewEditProfileModal
-          user={selectedUser}
+          user={selectedUser as any}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />

@@ -232,7 +232,7 @@ export default function TripScheduleModal({ isOpen, onClose }: TripScheduleModal
         <div className="bg-slate-900 text-white rounded-t-lg">
           <div className="grid grid-cols-7 gap-4 p-4 text-sm font-medium">
             <div>Photo</div>
-            <div>Driver's name</div>
+            <div>Driver name</div>
             <div>License No</div>
             <div>License Expiry</div>
             <div>Phone No</div>

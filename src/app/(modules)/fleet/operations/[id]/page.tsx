@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 
 type Props = {
   params: {
@@ -12,7 +12,6 @@ type Props = {
   };
 };
 export default function OperationsManagement({ params }: Props) {
-    const router = useRouter()
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="mb-6">

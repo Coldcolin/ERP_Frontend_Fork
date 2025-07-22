@@ -1,39 +1,19 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowRight } from 'lucide-react'
-import React, {useState} from 'react'
+import React from 'react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, PieChart,Pie, Cell } from 'recharts';
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store'
 import { useGetOverviewQuery, useGetMileageInfoQuery, useGetFuelUsageInfoQuery, useGetFuelExpensesInfoQuery } from '@/lib/redux/api/infoGraphicsApi';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const data:any = [
-  { name: 'Jan', value: 200 },
-  { name: 'Feb', value: 250 },
-  { name: 'Mar', value: 300 },
-  { name: 'Apr', value: 400 },
-  { name: 'May', value: 600 },
-  { name: 'Jun', value: 800 },
-];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const milesData:any = [
-  { name: 'Jan', value: 8500 },
-  { name: 'Feb', value: 9200 },
-  { name: 'Mar', value: 11000 },
-  { name: 'Apr', value: 10500 },
-  { name: 'May', value: 12000 },
-  { name: 'Jun', value: 17500 },
-];
-
-
 
 const Fleet = () => {
   const router = useRouter()
   const user = useSelector((state: RootState) => state.auth.user);
   
-  const {data:overview, isLoading, isError, isSuccess}= useGetOverviewQuery({})
+  const {data:overview, isLoading} = useGetOverviewQuery({})
   const {data: mileageInfo} = useGetMileageInfoQuery({})
   const {data: fuelUsageInfo} = useGetFuelUsageInfoQuery({})
   const {data: fuelExpenseInfo} = useGetFuelExpensesInfoQuery({})

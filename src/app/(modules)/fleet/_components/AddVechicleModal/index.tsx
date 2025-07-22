@@ -53,9 +53,9 @@ interface AddVehicleModalProps {
 export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
     const [createFleet] = useCreateFleetMutation();
     const [isLoading, setIsLoading] = useState(false);
-    const { data: driverData, isLoading: driverLoading } = useGetAllDriverQuery({})
+    const { data: driverData } = useGetAllDriverQuery({})
 
-    const drivers = driverData?.map((driver: any) => ({
+    const drivers = driverData?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
       id: driver._id,
       name: `${driver?.personalInfo?.name}`,
       // license: driver.licenseNumber
@@ -358,7 +358,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent className="w-[var(--radix-select-trigger-width)]">  {/* Match trigger width */}
-                                {drivers.map((driver:any) => (
+                                {drivers.map((driver: { id: string; name: string }) => (
                                   <SelectItem key={driver.id} value={driver.id}>
                                     {driver.name} 
                                   </SelectItem>
@@ -374,6 +374,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
 <FormField
                 control={form.control}
                 name="insurance"
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { value, onChange, ...field } }) => (
                   <FormItem className="md:col-span-3">
                     <FormLabel className="flex items-center">
@@ -400,6 +401,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
               <FormField
                 control={form.control}
                 name="RoadWorthines"
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 render={({ field: { value, onChange, ...field } }) => (
                   <FormItem className="md:col-span-3">
                     <FormLabel className="flex items-center">

@@ -1,13 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Plus, Calendar, X } from "lucide-react"
+import { ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
@@ -43,9 +41,9 @@ type AssignVehicleFormValues = z.infer<typeof assignVehicleSchema>
 export default function AssignVehicle() {
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const { data: fleetData, isLoading: fleetLoading } = useGetAllFleetQuery({})
-  const { data: driverData, isLoading: driverLoading } = useGetAllDriverQuery({})
-  const [assignVehicle, { isLoading: assignVehicleLoading }] = useAssignVehicleMutation()
+  const { data: fleetData } = useGetAllFleetQuery({})
+  const { data: driverData } = useGetAllDriverQuery({})
+  const [assignVehicle] = useAssignVehicleMutation()
   const router = useRouter();
 
   const form = useForm<AssignVehicleFormValues>({
@@ -62,12 +60,12 @@ export default function AssignVehicle() {
   })
 
   // Mock data - replace with actual data from your API
-  const vehicles = fleetData?.map((vehicle: any) => ({
+  const vehicles = fleetData?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
     id: vehicle._id,
     name: `${vehicle.make} ${vehicle.model} - ${vehicle.plateNumber}`
   })) || []
 
-  const drivers = driverData?.map((driver: any) => ({
+  const drivers = driverData?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
     id: driver._id,
     name: `${driver?.personalInfo?.name}`,
     // license: driver.licenseNumber
@@ -107,9 +105,15 @@ export default function AssignVehicle() {
       form.reset()
       router.push('/fleet/fleet-setup');
       setSelectedDepartments([])
-    } catch (error: any) {
-      console.error("Error assigning vehicle:", error)
-      toast.error(error.data?.message || "Failed to assign vehicle")
+    } catch (error: unknown) {
+      // console.error("Error assigning vehicle:", error)
+      // toast.error(error?.data?.message || "Failed to assign vehicle")
+      if (typeof error === "object" && error !== null && "data" in error) {
+        const err = error as { data?: { message?: string } };
+        toast.error(err.data?.message || "Failed to assign vehicle");
+      } else {
+        toast.error("Failed to assign vehicle");
+      }
     } finally {
       setIsLoading(false)
     }}
@@ -160,7 +164,7 @@ export default function AssignVehicle() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                                  {vehicles.map((vehicle:any) => (
+                                  {vehicles.map((vehicle: { id: string; name: string }) => (
                                     <SelectItem key={vehicle.id} value={vehicle.id}>
                                       {vehicle.name}
                                     </SelectItem>
@@ -277,7 +281,7 @@ export default function AssignVehicle() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent className="w-[var(--radix-select-trigger-width)]">  {/* Match trigger width */}
-                                {drivers.map((driver:any) => (
+                                {drivers.map((driver: { id: string; name: string }) => (
                                   <SelectItem key={driver.id} value={driver.id}>
                                     {driver.name} 
                                   </SelectItem>

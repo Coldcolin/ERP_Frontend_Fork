@@ -9,7 +9,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Checkbox } from "@/components/ui/checkbox"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -39,7 +38,7 @@ export default function MaintenanceSchedule() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const [createMaintenance] = useCreateMaintenanceMutation()
-  const { data: vehiclesData, isLoading: isVehiclesLoading, error: vehiclesError } = useGetAllFleetQuery({});
+  const { data: vehiclesData, isLoading: isVehiclesLoading } = useGetAllFleetQuery({});
 
   
 
@@ -59,7 +58,7 @@ export default function MaintenanceSchedule() {
     },
   })
 
-  const vehicles = vehiclesData?.map((vehicle:any) => ({
+  const vehicles = vehiclesData?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
     id: vehicle._id, // or vehicle.id depending on your API response
     name: `${vehicle.make} ${vehicle.model} - ${vehicle.plateNumber}`
   })) || []
@@ -98,9 +97,15 @@ export default function MaintenanceSchedule() {
       toast.success("Maintenance schedule created successfully!")
       form.reset()
       router.push("/fleet/fleet-setup")
-    } catch (error: any) {
-      console.error("Error creating schedule:", error)
-      toast.error(error.data?.message || "Failed to create maintenance schedule")
+    } catch (error: unknown) {
+      // console.error("Error creating schedule:", error)
+      // toast.error(error.data?.message || "Failed to create maintenance schedule")
+      if (typeof error === "object" && error !== null && "data" in error) {
+        const err = error as { data?: { message?: string } };
+        toast.error(err.data?.message || "Failed to assign vehicle");
+      } else {
+        toast.error("Failed to assign vehicle");
+      }
     } finally {
       setIsLoading(false)
     }
@@ -188,7 +193,7 @@ export default function MaintenanceSchedule() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                                {vehicles.map((vehicle:any) => (
+                                {vehicles.map((vehicle: any) => (
                                   <SelectItem key={vehicle.id} value={vehicle.id}>
                                     {vehicle.name}
                                   </SelectItem>

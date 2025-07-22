@@ -1,75 +1,58 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Plus, MoreVertical, FileSearch } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import {useGetAllFleetQuery} from "@/lib/redux/api/fleetApi"
-import { Card, CardContent } from "@/components/ui/card"
+import { Plus, FileSearch } from "lucide-react"
 import Link from "next/link"
+import { useGetAllFleetQuery } from "@/lib/redux/api/fleetApi"
 
 
-interface VehicleMetric {
-  title: string
-  value: number
-}
+// interface VehicleMetric {
+//   title: string
+//   value: number
+// }
 
-interface Vehicle {
-  id: string
-  name: string
-  year: number
-  code: string
-  image: string
-}
-
-const metrics: VehicleMetric[] = [
-  {
-    title: "Total Number of Vehicles",
-    value: 120,
-  },
-  {
-    title: "Vehicles Needing Maintenance",
-    value: 15,
-  },
-  {
-    title: "Vehicles Assigned",
-    value: 100,
-  },
-]
+// Define types for vehicle and maintenance
+type Maintenance = {
+  nextMaintenanceDate?: string;
+  scheduledDate?: string;
+};
+type Vehicle = {
+  maintenanceSchedule?: Maintenance[];
+  [key: string]: any;
+};
 
 
-const recentVehicles: Vehicle[] = [
-  {
-    id: "1",
-    name: "Ford Explorer",
-    year: 2023,
-    code: "ABC 123",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: "2",
-    name: "Ford F-150",
-    year: 2022,
-    code: "XYZ 456",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: "3",
-    name: "Toyota Camry",
-    year: 2021,
-    code: "DEF 789",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: "4",
-    name: "Mack Anthem Diecast",
-    year: 2023,
-    code: "GHI 012",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-]
+// const recentVehicles: Vehicle[] = [
+//   {
+//     id: "1",
+//     name: "Ford Explorer",
+//     year: 2023,
+//     code: "ABC 123",
+//     image: "/placeholder.svg?height=200&width=300",
+//   },
+//   {
+//     id: "2",
+//     name: "Ford F-150",
+//     year: 2022,
+//     code: "XYZ 456",
+//     image: "/placeholder.svg?height=200&width=300",
+//   },
+//   {
+//     id: "3",
+//     name: "Toyota Camry",
+//     year: 2021,
+//     code: "DEF 789",
+//     image: "/placeholder.svg?height=200&width=300",
+//   },
+//   {
+//     id: "4",
+//     name: "Mack Anthem Diecast",
+//     year: 2023,
+//     code: "GHI 012",
+//     image: "/placeholder.svg?height=200&width=300",
+//   },
+// ]
 
 export default function FleetSetupPage() {
   const { data: fleet = [], isLoading } = useGetAllFleetQuery({})
@@ -179,12 +162,12 @@ export default function FleetSetupPage() {
 
       {/* Table Body */}
       <div>
-        {fleet?.map((vehicle: any) => {
+        {fleet?.map((vehicle: Vehicle) => {
           const getNextMaintenanceDate = () => {
             if (!vehicle.maintenanceSchedule?.length) return null;
 
             const nextMaintenance = vehicle.maintenanceSchedule.find(
-              (maint: any) =>
+              (maint: Maintenance) =>
                 maint.nextMaintenanceDate &&
                 new Date(maint.nextMaintenanceDate) > new Date()
             );
@@ -192,10 +175,10 @@ export default function FleetSetupPage() {
             if (nextMaintenance) return nextMaintenance.nextMaintenanceDate;
 
             const futureMaintenance = vehicle.maintenanceSchedule
-              .filter((maint: any) => new Date(maint.scheduledDate) > new Date())
+              .filter((maint: Maintenance) => new Date(maint.scheduledDate ?? '') > new Date())
               .sort(
-                (a: any, b: any) =>
-                  new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime()
+                (a: Maintenance, b: Maintenance) =>
+                  new Date(a.scheduledDate ?? '').getTime() - new Date(b.scheduledDate ?? '').getTime()
               )[0];
 
             return futureMaintenance?.scheduledDate;

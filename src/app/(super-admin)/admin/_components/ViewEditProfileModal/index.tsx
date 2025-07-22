@@ -20,7 +20,7 @@ const formSchema = z.object({
 })
 
 
-type User = {
+type ModalUser = {
   id: string
   firstName: string
   lastName: string
@@ -31,7 +31,7 @@ type User = {
 }
 
 interface ViewEditProfileModalProps {
-  user: User
+  user: ModalUser
   isOpen: boolean
   onClose: () => void
 }
@@ -69,7 +69,7 @@ interface ViewEditProfileModalProps {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, form.reset]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   const handleEditClick = (e:any) => {
     e.preventDefault();
     setIsEditing(true);

@@ -1,46 +1,61 @@
 import React from 'react'
-import { ArrowLeft, FileText, Download, Plus } from "lucide-react"
+import { ArrowLeft, Download, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import pdfImd from "@/assets/Group.png"
+// import pdfImd from "@/assets/Group.png"
 import Image from "next/image"
 
-const documents:any = [
+// Define a type for document
+type Document = {
+  id: number;
+  type: string;
+  documentPath: string;
+  name?: string;
+  url?: string;
+};
+
+const documents: Document[] = [
   {
     id: 1,
-    name: "kamoru-driver-license.pdf",
-    type: "pdf",
-    url: "#"
+    name: "Driver's License",
+    type: "PDF",
+    url: "/documents/license.pdf",
+    documentPath: "/documents/license.pdf",
   },
   {
     id: 2,
-    name: "kamoru-national-idcard.pdf",
-    type: "pdf",
-    url: "#"
+    name: "Vehicle Registration",
+    type: "PDF",
+    url: "/documents/registration.pdf",
+    documentPath: "/documents/registration.pdf",
   },
   {
     id: 3,
-    name: "kamoru-road-worthiness.pdf",
-    type: "pdf",
-    url: "#"
+    name: "Insurance",
+    type: "PDF",
+    url: "/documents/insurance.pdf",
+    documentPath: "/documents/insurance.pdf",
   },
   {
     id: 4,
-    name: "kamoru-medical-fitness.pdf",
-    type: "pdf",
-    url: "#"
+    name: "Road Worthiness",
+    type: "PDF",
+    url: "/documents/roadworthiness.pdf",
+    documentPath: "/documents/roadworthiness.pdf",
   },
   {
     id: 5,
-    name: "kamoru-vehicle-license.pdf",
-    type: "pdf",
-    url: "#"
+    name: "Medical Certificate",
+    type: "PDF",
+    url: "/documents/medical.pdf",
+    documentPath: "/documents/medical.pdf",
   },
   {
     id: 6,
-    name: "kamoru-proof-of-ownership.pdf",
-    type: "pdf",
-    url: "#"
-  }
+    name: "Other Document",
+    type: "PDF",
+    url: "/documents/other.pdf",
+    documentPath: "/documents/other.pdf",
+  },
 ];
 
 const DriverDetails = () => {
@@ -140,7 +155,7 @@ const DriverDetails = () => {
 
           {/* Document Grid */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-      {documents.map((document:any) => (
+      {documents.map((document: Document) => (
         <div key={document.id} className="flex flex-col items-center p-4 bg-gray-50 rounded-lg">
           <div className="w-12 h-12  rounded flex items-center justify-center mb-2 relative">
             {/* PDF icon - replace with your actual image path */}

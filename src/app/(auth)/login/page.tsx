@@ -58,7 +58,7 @@ export default function LoginPage() {
         const callbackUrl = params.get('callbackUrl') || '/'
         router.push(callbackUrl)
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      
     } catch (err: any) {
       console.error(err)
       const errorMessage =
