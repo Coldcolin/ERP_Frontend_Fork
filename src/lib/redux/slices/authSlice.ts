@@ -41,6 +41,11 @@ export const loginUser = createAsyncThunk(
         expires: 7,
         sameSite: 'strict'
       });
+
+      Cookies.set('user', JSON.stringify(response.data.user), {
+        expires: 7,
+        sameSite: 'strict'
+      });
       
       return response.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +75,7 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem('token');
       Cookies.remove('token');
+      Cookies.remove('user');
     }
   },
   extraReducers: (builder) => {

@@ -35,12 +35,12 @@ const navigations: Navigation[] = [
     label: 'Driver Management',
   },
   {
-    href: '/fleet/operations',
+    href: '/fleet/operation-management',
     icon: <Car color="black" size={20} />,
     label: 'Fleet Operations Management',
   },
   {
-    href: '/fleet/maintenance',
+    href: '/fleet/maintenace-repair',
     icon: <WrenchIcon color="black" size={20} />,
     label: 'Fleet Maintenance and Repairs',
   },

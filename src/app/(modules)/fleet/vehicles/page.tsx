@@ -1,5 +1,8 @@
+"use client"
 import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
+import {useGetAllFleetQuery} from "../../../../lib/redux/api/fleetApi"
+import { Spinner } from "@/components/ui/spinner"
 
 interface MetricCardProps {
   title: string;
@@ -11,18 +14,27 @@ interface MetricCardProps {
 }
 
 export default function VehicleDashboard() {
+  const {data: allVehicles, isLoading, isError}= useGetAllFleetQuery({})
+  // console.log(allVehicles)
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-xl font-bold mb-4">Vehicles</h1>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <MetricCard title="Fleets" value="1,283" subtext="10%" bgColor="bg-[#0a192f]" textColor="text-white" />
         <MetricCard title="Miles Driven" value="25675k" subtext="15%" />
         <MetricCard title="Fuel consumption" value="10238" unit="/Gal" subtext="13%" />
         <MetricCard title="Avg fuel cost" value="₹998" unit="/Gal" subtext="14%" />
         <MetricCard title="Avg miles" value="138" subtext="7%" />
-      </div>
+      </div> */}
 
       {/* Vehicles Table */}
       <div className="overflow-x-auto">
@@ -33,31 +45,31 @@ export default function VehicleDashboard() {
                 <input type="checkbox" className="rounded" />
               </th>
               <th className="p-3 text-left">Vehicle ID</th>
-              <th className="p-3 text-left">Year</th>
+              <th className="p-3 text-left">Location</th>
               <th className="p-3 text-left">Make</th>
               <th className="p-3 text-left">Model</th>
-              <th className="p-3 text-left">Weight</th>
+              <th className="p-3 text-left">Driver</th>
               <th className="p-3 text-left">Type</th>
-              <th className="p-3 text-left">Exempt</th>
+              <th className="p-3 text-left">Status</th>
             </tr>
           </thead>
           <tbody>
-            {vehicleData.map((vehicle, index) => (
-              <tr key={vehicle.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+            {allVehicles?.map((vehicle: any, index: number) => (
+              <tr key={vehicle._id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                 <td className="p-3">
                   <input type="checkbox" className="rounded" />
                 </td>
                 <td className="p-3">
                   <Link href="#" className="text-blue-600 hover:underline">
-                    {vehicle.id}
+                    {vehicle?.plateNumber}
                   </Link>
                 </td>
-                <td className="p-3">{vehicle.year}</td>
-                <td className="p-3">{vehicle.make}</td>
-                <td className="p-3">{vehicle.model}</td>
-                <td className="p-3">{vehicle.weight}</td>
-                <td className="p-3">{vehicle.type}</td>
-                <td className="p-3">{vehicle.exempt}</td>
+                <td className="p-3">{vehicle?.location}</td>
+                <td className="p-3">{vehicle?.make}</td>
+                <td className="p-3">{vehicle?.model}</td>
+                <td className="p-3">{vehicle?.currentDriver?.personalInfo?.name}</td>
+                <td className="p-3">{vehicle?.type}</td>
+                <td className="p-3">{vehicle?.status}</td>
               </tr>
             ))}
           </tbody>

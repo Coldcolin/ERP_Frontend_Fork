@@ -1,11 +1,12 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowRight } from 'lucide-react'
-import React from 'react'
+import React, {useState} from 'react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, PieChart,Pie, Cell } from 'recharts';
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store'
+import { useGetOverviewQuery, useGetMileageInfoQuery, useGetFuelUsageInfoQuery, useGetFuelExpensesInfoQuery } from '@/lib/redux/api/infoGraphicsApi';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const data:any = [
@@ -26,20 +27,18 @@ const milesData:any = [
   { name: 'Jun', value: 17500 },
 ];
 
-const fleetData = [
-  { name: 'Total Fleets', value: 1700, color: '#6366F1' }, 
-   
-  { name: 'Others', value: 60, color: '#EF4444' },  
-     // orange-400
-  { name: 'Break down', value: 100, color: '#4ADE80' }, 
-  { name: 'Maintenance', value: 500, color: '#FB923C' },      // green-400
-          // red-500
-];
+
 
 const Fleet = () => {
   const router = useRouter()
   const user = useSelector((state: RootState) => state.auth.user);
-
+  
+  const {data:overview, isLoading, isError, isSuccess}= useGetOverviewQuery({})
+  const {data: mileageInfo} = useGetMileageInfoQuery({})
+  const {data: fuelUsageInfo} = useGetFuelUsageInfoQuery({})
+  const {data: fuelExpenseInfo} = useGetFuelExpensesInfoQuery({})
+  console.log(fuelExpenseInfo)
+  // console.log(mileageInfo)
   return (
     <div className="container mx-auto py-2 ">
         <h1 className="text-3xl font-bold mb-8">Welcome, {user?.firstName} {user?.lastName}!</h1>
@@ -57,25 +56,25 @@ const Fleet = () => {
     <div className='flex'>
       <div className="flex mb-4 w-full h-52">
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+         {isLoading? <div>Loading...</div>: <PieChart>
             <Pie
-              data={fleetData}
+              data={overview?.data}
               cx="50%"
               cy="50%"
               innerRadius={50}
               outerRadius={90}
               dataKey="value"
             >
-              {fleetData.map((entry, index) => (
+              {overview?.data?.map((entry: any, index: number) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
             <Tooltip />
-          </PieChart>
+          </PieChart>}
         </ResponsiveContainer>
       </div>
       <div className="space-y-4 mt-6">
-        {fleetData.map((item, index) => (
+        {overview?.data?.map((item: any, index: number) => (
           <div key={index} className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: item.color }}></div>
             <span className="text-gray-500">{item.name}</span>
@@ -101,13 +100,13 @@ const Fleet = () => {
                     <div className="space-y-2 p-4">
                       <p className="text-sm text-gray-500">Total km driven</p>
                       <p className="text-2xl font-semibold">
-                        <span>58023K</span>
+                        <span>{mileageInfo?.Mileage}</span>
                         <span className="text-gray-500 ml-2">Km</span>
                       </p>
                     </div>
                     <div className="w-full h-32">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={data}>
+                     {isLoading? <div>Loading...</div>: <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={mileageInfo?.monthly}>
                           <Tooltip />
                           <Area
                             type="monotone"
@@ -122,7 +121,7 @@ const Fleet = () => {
                             </linearGradient>
                           </defs>
                         </AreaChart>
-                      </ResponsiveContainer>
+                      </ResponsiveContainer>}
                     </div>
                   </div>
             </div>
@@ -136,13 +135,13 @@ const Fleet = () => {
                     <div className="space-y-2 p-4">
                       <p className="text-sm text-gray-500">Total expense</p>
                       <p className="text-2xl font-semibold">
-                        <span>3.8</span>
-                        <span className="text-gray-500 ml-2">M</span>
+                        <span>{fuelExpenseInfo?.totalFuelCost}</span>
+                        <span className="text-gray-500 ml-2">₦</span>
                       </p>
                     </div>
                     <div className="w-full h-32">
                       <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={milesData}>
+                        <AreaChart data={fuelExpenseInfo?.monthlyBreakdown}>
                           <Tooltip />
                           <Area
                           type="monotone"
@@ -177,13 +176,13 @@ const Fleet = () => {
               <div className="space-y-2 p-4">
                 <p className="text-sm text-gray-500">Total fuel used</p>
                 <p className="text-2xl font-semibold">
-                  <span>45038</span>
+                  <span>{fuelUsageInfo?.totalFuelUsed}</span>
                   <span className="text-gray-500 ml-2">Litres</span>
                 </p>
               </div>
               <div className="w-full h-40">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data}>
+                  <AreaChart data={fuelUsageInfo?.monthlyBreakdown}>
                     <Tooltip />
                     <Area
                       type="monotone"

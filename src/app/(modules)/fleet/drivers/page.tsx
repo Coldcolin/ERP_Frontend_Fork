@@ -1,16 +1,41 @@
+"use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter, MoreVertical } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import {useGetAllDriverQuery} from "@/lib/redux/api/driverApi"
 
 export default function DriverManagement() {
+    const router = useRouter();
+    const {data: allDrivers, isLoading, isError}= useGetAllDriverQuery({})
+    
+    function formatToYYYYMMDD(dateString: string) {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date:", dateString);
+        return null;
+      }
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+
+      return `${year}-${month}-${day}`;
+    }
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+    if (isError) {
+      return <div>Error: "Error Loading Drivers" </div>;
+    }
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Driver Management - (11)</h1>
+          <h1 className="text-2xl font-bold">Driver Management - ({allDrivers?.length})</h1>
           <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
@@ -43,34 +68,34 @@ export default function DriverManagement() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {drivers.map((driver) => (
-                <tr key={driver.id} className="bg-gray-50">
+              {allDrivers?.map((driver: any) => (
+                <tr key={driver._id} className="bg-gray-50">
                   <td className="px-4 py-3">
                     <Avatar>
-                      <AvatarImage src={driver.photo || "/placeholder.svg"} alt={driver.name} />
-                      <AvatarFallback>{driver.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={driver.photo || "/placeholder.svg"} alt={driver?.personalInfo?.name} />
+                      <AvatarFallback>{driver?.personalInfo?.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </td>
-                  <td className="px-4 py-3 font-medium">{driver.name}</td>
-                  <td className="px-4 py-3">{driver.licenseNo}</td>
-                  <td className="px-4 py-3">{driver.licenseExpiry}</td>
-                  <td className="px-4 py-3">{driver.phoneNo}</td>
+                  <td className="px-4 py-3 font-medium">{driver?.personalInfo?.name}</td>
+                  <td className="px-4 py-3">{driver?.personalInfo?.licenseNo}</td>
+                  <td className="px-4 py-3">{formatToYYYYMMDD(driver?.personalInfo?.licenseExpiry)}</td>
+                  <td className="px-4 py-3">{driver?.personalInfo?.contact}</td>
                   <td className="px-4 py-3">
-                    {driver.assignedVehicle ? (
+                    {driver?.assignedVehicle ? (
                       <Link href="#" className="text-blue-500 hover:underline">
-                        {driver.assignedVehicle}
+                        {driver?.assignedVehicle?.plateNumber}
                       </Link>
                     ) : (
-                      <span className="text-gray-500">unassigned</span>
+                      <span className="text-gray-500">{driver?.assignedVehicle?.status}</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        driver.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                        driver?.assignedVehicle?.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {driver.status}
+                      {driver?.assignedVehicle?.status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -81,7 +106,7 @@ export default function DriverManagement() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/fleet/drivers/${driver._id}`)}>View details</DropdownMenuItem>
                         <DropdownMenuItem>Edit driver</DropdownMenuItem>
                         <DropdownMenuItem>Delete driver</DropdownMenuItem>
                       </DropdownMenuContent>

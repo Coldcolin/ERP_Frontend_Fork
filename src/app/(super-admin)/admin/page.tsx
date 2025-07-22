@@ -13,92 +13,16 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import TableOptions from '@/components/app/TableOptions'
-import  ViewEditProfileModal  from './_components/ViewEditProfileModal'
-import { User,UserRoundPen ,Key, CloudDownload, Trash2  } from 'lucide-react';
+import ViewEditProfileModal from './_components/ViewEditProfileModal'
+import { User, UserRoundPen, Key, CloudDownload, Trash2 } from 'lucide-react';
 import DeleteConfirmatioNodal from '@/components/app/DeleteConfirmatioNodal'
-// import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useGetAllUserQuery } from "@/lib/redux/api/userApi"
+import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const users: any = [
-  {
-    id: 1,
-    firstName: "Sandeep",
-    lastName: "Kandula",
-    email: "SandeepKandula@gmail.com",
-    status: "Active",
-    department: "Fleet Management",
-    avatar: "",
-    role: "Manager",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 2,
-    firstName: "Nick",
-    lastName: "",
-    email: "nick@dreamworks.com",
-    status: "Inactive",
-    department: "HR Department",
-    avatar: "",
-    role: "Staff",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 3,
-    firstName: "Chuks",
-    lastName: "",
-    email: "chuks@dreamworks.com",
-    status: "Inactive",
-    department: "HR Department",
-    avatar: "",
-    role: "Staff",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 4,
-    firstName: "Michael",
-    lastName: "Angelo",
-    email: "michaelangelo@dreamworks.com",
-    status: "Inactive",
-    department: "Finance",
-    avatar: "",
-    role: "Manager",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 5,
-    firstName: "Ahmad",
-    lastName: "Zarah",
-    email: "ahmadzarah@dreamworks.com",
-    status: "Inactive",
-    department: "HR Department",
-    avatar: "",
-    role: "Staff",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 6,
-    firstName: "Jack",
-    lastName: "Wilson",
-    email: "jackwilson@dreamworks.com",
-    status: "Inactive",
-    department: "Finance",
-    avatar: "",
-    role: "Staff",
-    phoneNo: "+1234567890",
-  },
-  {
-    id: 7,
-    firstName: "Sophia",
-    lastName: "King",
-    email: "sophiaking@dreamworks.com",
-    status: "Inactive",
-    department: "Fleet Management",
-    avatar: "",
-    role: "Staff",
-    phoneNo: "+1234567890",
-  },
-]
 const Admin = () => {
 const [isModalOpen, setIsModalOpen] = React.useState(false);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,7 +31,11 @@ const [isDialogOpen, setIsDialogOpen] = useState(false)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const [userToDelete, setUserToDelete] = useState<any>(null) 
 // const isAuthenticated = useSelector((state: any) => state?.auth?.user)
+const router = useRouter();
 
+const { data: users, error, isLoading } = useGetAllUserQuery({});
+
+console.log("user data",users)
 const handleDeleteUser = () => {
   if (userToDelete) {
     console.log(`Deleting user with ID: ${userToDelete.id}`)
@@ -117,6 +45,8 @@ const handleDeleteUser = () => {
     setUserToDelete(null) // Reset the userToDelete state
   }
 }
+// console.log(isLoading)
+
 
 // const handleViewProfile = (user: any) => {
 //   setSelectedUser(user)
@@ -125,8 +55,6 @@ const handleDeleteUser = () => {
   return (
   <div>
     <main className="flex-1">
-      
-
         <div className="p-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900">User management</h2>
@@ -215,85 +143,124 @@ const handleDeleteUser = () => {
                   <div className="col-span-2">Role</div>
                   <div className="col-span-1">Actions</div>
                 </div>
-                <div className="divide-y">
-                  {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  users.map((user:any) => (
-                    <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
-                      <div className="col-span-4 flex items-center gap-3">
-                      <Avatar>
-                            <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
-                            <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                  <div>
-                    <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
-                    <div className="text-sm text-gray-500">{user.email}</div>
-                  </div>
-
-                      </div>
-                      <div className="col-span-2">
-                        <Badge
-                          variant={user.status === "Active" ? "default" : "outline"}
-                          className={
-                            user.status === "Active"
-                              ? "bg-green-100 text-green-800 hover:bg-green-100"
-                              : "bg-red-100 text-red-800 hover:bg-red-100"
-                          }
-                        >
-                          {user.status}
-                        </Badge>
-                      </div>
-                      <div className="col-span-3 text-sm">{user.department}</div>
-                      <div className="col-span-2 text-sm">{user.role}</div>
-                      <div className="col-span-1 text-right">
-                       <TableOptions 
-                       variant="dotsVertical"
-                       options={[
-                        {
-                          label: "View Profile",
-                          onClick: () => {
-                            setSelectedUser(user);
-                            setIsModalOpen(true);
-                          },
-                          icon: <User className="h-4 w-4" />,
-                        },
-                        {
-                          label: "Edit Profile",
-                          onClick: () => {
-                            setSelectedUser(user);
-                            setIsModalOpen(true);
-                            setSelectedUser({ ...user, isEditing: true });
-                          },
-                          icon: <UserRoundPen  className="h-4 w-4" />,
-                        },
-                        {
-                          label: "Change password",
-                          onClick: () => {
-                          console.log('Change password');
-                          },
-                          icon: <Key  className="h-4 w-4" />,
-                        },
-                        {
-                          label: "Export details",
-                          onClick: () => {
-                          console.log('Eport details');
-                          },
-                          icon: <CloudDownload  className="h-4 w-4" />,
-                        },
-                        {
-                          label: "Delete User",
-                          onClick: () => {
-                            setUserToDelete(user) 
-                            setIsDialogOpen(true) 
-                          },
-                          icon: <Trash2  className="h-4 w-4" />,
-                        },
-                       ]}
-                       />
-                      </div>
+                {isLoading ? (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Spinner size="lg" className="mb-4" />
+                    <p className="text-sm text-gray-500">Loading users...</p>
+                    <div className="w-full px-6 py-4 space-y-4 mt-4">
+                      {[...Array(5)].map((_, index) => (
+                        <div key={index} className="grid grid-cols-12 items-center gap-4">
+                          <div className="col-span-4 flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-48" />
+                            </div>
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-6 w-16" />
+                          </div>
+                          <div className="col-span-3">
+                            <Skeleton className="h-4 w-24" />
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-4 w-16" />
+                          </div>
+                          <div className="col-span-1 flex justify-end">
+                            <Skeleton className="h-8 w-8 rounded-full" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {users?.users?.map((user:any) => (
+                      <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
+                        <div className="col-span-4 flex items-center gap-3">
+                        <Avatar>
+                              <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
+                              <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                    <div>
+                      <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
+                    </div>
+
+                        </div>
+                        <div className="col-span-2">
+                          <Badge
+                            variant={user.isActive === true ? "default" : "outline"}
+                            className={
+                              user.isActive === true
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                            }
+                          >
+                            {user.isActive ? "Active" : "Inactive"}
+                            {/* Inactive */}
+                          </Badge>
+                        </div>
+                        <div className="col-span-3 text-sm">{user.department ? user.department: "Admin"}</div>
+                        <div className="col-span-2 text-sm">
+                          {/* {user.role} */}
+                          Staff
+                          </div>
+                        <div className="col-span-1 text-right cursor-pointer">
+
+                         <TableOptions 
+                         variant="dotsVertical"
+                         options={[
+                          {
+                            label: "View Profile",
+                            onClick: () => {
+                              setSelectedUser(user);
+                              setIsModalOpen(true);
+                            },
+                            icon: <User className="h-4 w-4 cursor-pointer" />,
+                          },
+                          {
+                            label: "Edit Profile",
+                            onClick: () => {
+                              setSelectedUser(user);
+                              setIsModalOpen(true);
+                              setSelectedUser({ ...user, isEditing: true });
+                            },
+                            icon: <UserRoundPen  className="h-4 w-4 cursor-pointer" />,
+
+                          },
+                          {
+                            label: "Change permissions",
+                            onClick: () => {
+                              router.push(`/admin/permissions/${user._id}`);
+                            },
+                            icon: <Key  className="h-4 w-4 cursor-pointer" />,
+
+                          },
+                          {
+                            label: "Export details",
+                            onClick: () => {
+                            console.log('Eport details');
+                            },
+                            icon: <CloudDownload  className="h-4 w-4 cursor-pointer" />,
+
+                          },
+                          {
+                            label: "Delete User",
+                            onClick: () => {
+                              setUserToDelete(user) 
+                              setIsDialogOpen(true) 
+                            },
+                            icon: <Trash2  className="h-4 w-4 cursor-pointer" />,
+
+                          },
+                         ]}
+                         />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -306,34 +273,112 @@ const handleDeleteUser = () => {
                   <div className="col-span-2">Role</div>
                   <div className="col-span-1">Actions</div>
                 </div>
-                <div className="divide-y">
-                  {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  users.filter((user:any) => user.status === "Active").map((user:any) => (
-                      <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
-                        <div className="col-span-4 flex items-center gap-3">
-                        <Avatar>
-  <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
-  <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
-</Avatar>
-<div>
-  <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
-  <div className="text-sm text-gray-500">{user.email}</div>
-</div>
+                {isLoading ? (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Spinner size="lg" className="mb-4" />
+                    <p className="text-sm text-gray-500">Loading active users...</p>
+                    <div className="w-full px-6 py-4 space-y-4 mt-4">
+                      {[...Array(3)].map((_, index) => (
+                        <div key={index} className="grid grid-cols-12 items-center gap-4">
+                          <div className="col-span-4 flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-48" />
+                            </div>
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-6 w-16" />
+                          </div>
+                          <div className="col-span-3">
+                            <Skeleton className="h-4 w-24" />
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-4 w-16" />
+                          </div>
+                          <div className="col-span-1 flex justify-end">
+                            <Skeleton className="h-8 w-8 rounded-full" />
+                          </div>
                         </div>
-                        <div className="col-span-2">
-                          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{user.status}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {users?.users
+                      ?.filter((user:any) => user.isActive === true)
+                      ?.map((user:any) => (
+                        <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
+                          <div className="col-span-4 flex items-center gap-3">
+                          <Avatar>
+                              <AvatarImage src={user?.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
+                              <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
+                            </div>
+                          </div>
+                          <div className="col-span-2">
+                            <Badge variant={user.isActive === true ? "default" : "outline"}
+                            className={
+                              user.isActive === true
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                            }>{user.isActive? "Active": "Inactive"}</Badge>
+                          </div>
+                          <div className="col-span-3 text-sm">{user.department ? user.department: "Admin"}</div>
+                          <div className="col-span-2 text-sm">{user.role}</div>
+                          <div className="col-span-1 text-right">
+                            <TableOptions 
+                            variant="dotsVertical"
+                            options={[
+                              {
+                                label: "View Profile",
+                                onClick: () => {
+                                  setSelectedUser(user);
+                                  setIsModalOpen(true);
+                                },
+                                icon: <User className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Edit Profile",
+                                onClick: () => {
+                                  setSelectedUser(user);
+                                  setIsModalOpen(true);
+                                  setSelectedUser({ ...user, isEditing: true });
+                                },
+                                icon: <UserRoundPen  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Change permissions",
+                                onClick: () => {
+                                  router.push(`/admin/permissions/${user._id}`);
+                                },
+                                icon: <Key  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Export details",
+                                onClick: () => {
+                                console.log('Eport details');
+                                },
+                                icon: <CloudDownload  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Delete User",
+                                onClick: () => {
+                                  setUserToDelete(user) 
+                                  setIsDialogOpen(true) 
+                                },
+                                icon: <Trash2  className="h-4 w-4" />,
+                              },
+                            ]}
+                            />
+                          </div>
                         </div>
-                        <div className="col-span-3 text-sm">{user.department}</div>
-                        <div className="col-span-2 text-sm">{user.role}</div>
-                        <div className="col-span-1 text-right">
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
+                      ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -346,36 +391,114 @@ const handleDeleteUser = () => {
                   <div className="col-span-2">Role</div>
                   <div className="col-span-1">Actions</div>
                 </div>
-                <div className="divide-y">
-                  {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  users.filter((user:any) => user.status === "Inactive").map((user:any) => (
-                      <div key={user.id} className="grid grid-cols-12 items-center px-6 py-4">
-                        <div className="col-span-4 flex items-center gap-3">
-                        <Avatar>
-                            <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
-                            <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+                {isLoading ? (
+                  <div className="flex flex-col items-center justify-center py-8">
+                    <Spinner size="lg" className="mb-4" />
+                    <p className="text-sm text-gray-500">Loading inactive users...</p>
+                    <div className="w-full px-6 py-4 space-y-4 mt-4">
+                      {[...Array(2)].map((_, index) => (
+                        <div key={index} className="grid grid-cols-12 items-center gap-4">
+                          <div className="col-span-4 flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-32" />
+                              <Skeleton className="h-3 w-48" />
+                            </div>
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-6 w-16" />
+                          </div>
+                          <div className="col-span-3">
+                            <Skeleton className="h-4 w-24" />
+                          </div>
+                          <div className="col-span-2">
+                            <Skeleton className="h-4 w-16" />
+                          </div>
+                          <div className="col-span-1 flex justify-end">
+                            <Skeleton className="h-8 w-8 rounded-full" />
                           </div>
                         </div>
-                        <div className="col-span-2">
-                          <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
-                            {user.status}
-                          </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {users?.users
+                      ?.filter((user:any) => user.isActive === false)
+                      ?.map((user:any) => (
+                        <div key={user._id} className="grid grid-cols-12 items-center px-6 py-4">
+                          <div className="col-span-4 flex items-center gap-3">
+                          <Avatar>
+                              <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`.trim()} />
+                              <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{`${user.firstName} ${user.lastName}`.trim()}</div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
+                            </div>
+                          </div>
+                          <div className="col-span-2">
+                            <Badge variant={user.isActive === true ? "default" : "outline"}
+                            className={
+                              user.isActive === true
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                            }>
+                              {user.isActive? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                          <div className="col-span-3 text-sm">{user.department ? user.department: "Admin"}</div>
+                          <div className="col-span-2 text-sm">{user.role}</div>
+                          <div className="col-span-1 text-right">
+                            <TableOptions 
+                            variant="dotsVertical"
+                            options={[
+                              {
+                                label: "View Profile",
+                                onClick: () => {
+                                  setSelectedUser(user);
+                                  setIsModalOpen(true);
+                                },
+                                icon: <User className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Edit Profile",
+                                onClick: () => {
+                                  setSelectedUser(user);
+                                  setIsModalOpen(true);
+                                  setSelectedUser({ ...user, isEditing: true });
+                                },
+                                icon: <UserRoundPen  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Change permissions",
+                                onClick: () => {
+                                  router.push(`/admin/permissions/${user._id}`);
+                                },
+                                icon: <Key  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Export details",
+                                onClick: () => {
+                                console.log('Eport details');
+                                },
+                                icon: <CloudDownload  className="h-4 w-4" />,
+                              },
+                              {
+                                label: "Delete User",
+                                onClick: () => {
+                                  setUserToDelete(user) 
+                                  setIsDialogOpen(true) 
+                                },
+                                icon: <Trash2  className="h-4 w-4" />,
+                              },
+                            ]}
+                            />
+                          </div>
                         </div>
-                        <div className="col-span-3 text-sm">{user.department}</div>
-                        <div className="col-span-2 text-sm">{user.role}</div>
-                        <div className="col-span-1 text-right">
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
+                      ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
