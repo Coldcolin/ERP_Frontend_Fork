@@ -136,7 +136,7 @@ const handleDeleteUser = () => {
                   <Filter className="h-4 w-4" />
                   Filters
                 </Button>
-                <Link href="/admin/invite-users">
+                <Link href="/admin/invite-users" prefetch={true}>
                   <Button size="sm" className="gap-2">
                     <PlusIcon className="h-4 w-4" />
                     Invite Employee
@@ -242,11 +242,12 @@ const handleDeleteUser = () => {
                           },
                           {
                             label: "Change permissions",
+                            nextHref: `/admin/permissions/${user._id}`,
                             onClick: () => {
-                              router.push(`/admin/permissions/${user._id}`);
+                              // Preload for fastest routing
+                              router.prefetch(`/admin/permissions/${user._id}`);
                             },
                             icon: <Key  className="h-4 w-4 cursor-pointer" />,
-
                           },
                           {
                             label: "Export details",

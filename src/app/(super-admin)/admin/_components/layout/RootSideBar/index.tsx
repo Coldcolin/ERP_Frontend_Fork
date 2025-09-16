@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import UserDropdown from '@/components/app/UserDropDown';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 // import { AddMenu } from '../AddMenu';
 
 type NavItem = {
@@ -59,7 +60,8 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
                   key={`desktop-navigation-${index}`}
                   className="relative text-center cursor-pointer"
                 >
-                  <a
+                  <Link
+                    prefetch={true}
                     href={item.href}
                     className={`flex gap-3 items-center px-6 font-semibold transition-all ${
                       isActive
@@ -69,7 +71,7 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
                   >
                     <span className="h-5 w-5">{item.icon}</span>
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               );
             })}

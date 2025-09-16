@@ -1,13 +1,16 @@
 "use client"
 // import Image from "next/image"
+import {useState} from "react"
 import { ArrowLeft, Download, Edit, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 // import { useRouter } from "next/navigation"
 import {useGetDriverDetailsQuery} from "@/lib/redux/api/driverApi"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import { DriverStatusModal } from "../../_components/drive-status-modal"
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
+import { useRouter } from "next/navigation"
 
 type Props = {
   params: { id: string };
@@ -17,10 +20,12 @@ export default function Component({ params }: Props) {
     // const router = useRouter();
     // const { id } = React.use(params);
     // const {data: driverInfo, isLoading}= useGetDriverDetailsQuery(params?.id);
+    const router = useRouter();
     const { data: driverInfo, isLoading } = useGetDriverDetailsQuery(params.id);
     const driverCerts = driverInfo?.certifications || [];
     const vehicleCerts = driverInfo?.assignedVehicle?.certifications || [];
     const allDocs = [...driverCerts, ...vehicleCerts];
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
      async function downloadAllAsZip() {
         const zip = new JSZip();
@@ -71,7 +76,7 @@ export default function Component({ params }: Props) {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4" onClick={() => window.history.back()}>
+          <div className="flex items-center gap-2 mb-4"   onClick={() => router.back()}>
             <Button variant="ghost" size="sm" className="p-1">
               <ArrowLeft className="w-4 h-4" />
             </Button>
@@ -88,15 +93,15 @@ export default function Component({ params }: Props) {
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">Driver ID:</span>
               <span className="text-sm font-medium text-red-600">{params?.id}</span>
-              <Button variant="link" className="text-blue-600 text-sm p-0 h-auto">
+              {/* <Button variant="link" className="text-blue-600 text-sm p-0 h-auto">
                 See performance metrics
-              </Button>
+              </Button> */}
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="flex items-center gap-2 cursor-pointer" onClick={() => setIsModalOpen(true)}>
                 <Edit className="w-4 h-4" />
-                Edit driver details
+                Update driver Status
               </Button>
               <Button size="sm" className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800">
                 <Plus className="w-4 h-4" />
@@ -155,6 +160,10 @@ export default function Component({ params }: Props) {
                   <p className="text-sm font-medium text-gray-900">{formatToYYYYMMDD(driverInfo?.personalInfo?.licenseExpiry)}</p>
                 </div>
               </div>
+              <Button variant="outline" size="sm" className="flex items-center gap-2 mt-3">
+                <Edit className="w-4 h-4" />
+                Edit driver details
+              </Button>
             </CardContent>
           </Card>
 
@@ -181,7 +190,9 @@ export default function Component({ params }: Props) {
             </CardContent>
           </Card>
         </div>
+
       </div>
+      <DriverStatusModal isOpen={isModalOpen} id={params?.id} status={driverInfo?.status} name={driverInfo?.personalInfo?.name} onClose={() => setIsModalOpen(false)} />
     </div>
   )
 }

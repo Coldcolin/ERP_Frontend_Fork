@@ -54,8 +54,8 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
     const [createFleet] = useCreateFleetMutation();
     const [isLoading, setIsLoading] = useState(false);
     const { data: driverData } = useGetAllDriverQuery({})
-
-    const drivers = driverData?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
+    // console.log(driverData)
+    const drivers = driverData?.data?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
       id: driver._id,
       name: `${driver?.personalInfo?.name}`,
       // license: driver.licenseNumber
@@ -189,11 +189,11 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center">
-                      Vehicle Type (e.g bike car, bus, or truck)
+                      Vehicle Type (Bike, Car, Bus, Van or Truck)
                       <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="2005" className="bg-slate-50" {...field} />
+                      <Input placeholder="Bike, Car, Bus, Van or Truck" className="bg-slate-50" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -210,7 +210,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                       <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="7,800" className="bg-slate-50" {...field} />
+                      <Input placeholder="Lagos" className="bg-slate-50" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -2,9 +2,19 @@
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Plus, FileSearch } from "lucide-react"
+import { Plus, FileSearch, Search } from "lucide-react"
+import { useDebounce } from "@/hooks/use-debounce"
+import { useEffect } from "react"
 import Link from "next/link"
 import { useGetAllFleetQuery } from "@/lib/redux/api/fleetApi"
+import { AddVehicleModal } from "../_components/AddVechicleModal"
+import { useState } from "react"
+// import { SelectContent, SelectValue } from "@/components/ui/select"
+// import { SelectTrigger } from "@/components/ui/select"
+// import { Select } from "@/components/ui/select"
+import { Card, CardContent } from "@/components/ui/card"
+// import { SelectItem } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 
 
 // interface VehicleMetric {
@@ -23,104 +33,108 @@ type Vehicle = {
 };
 
 
-// const recentVehicles: Vehicle[] = [
-//   {
-//     id: "1",
-//     name: "Ford Explorer",
-//     year: 2023,
-//     code: "ABC 123",
-//     image: "/placeholder.svg?height=200&width=300",
-//   },
-//   {
-//     id: "2",
-//     name: "Ford F-150",
-//     year: 2022,
-//     code: "XYZ 456",
-//     image: "/placeholder.svg?height=200&width=300",
-//   },
-//   {
-//     id: "3",
-//     name: "Toyota Camry",
-//     year: 2021,
-//     code: "DEF 789",
-//     image: "/placeholder.svg?height=200&width=300",
-//   },
-//   {
-//     id: "4",
-//     name: "Mack Anthem Diecast",
-//     year: 2023,
-//     code: "GHI 012",
-//     image: "/placeholder.svg?height=200&width=300",
-//   },
-// ]
+
 
 export default function FleetSetupPage() {
-  const { data: fleet = [], isLoading } = useGetAllFleetQuery({})
-  console.log("this is fleet",fleet)
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Number of items per page
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchTerm = useDebounce(searchInput, 500); // 500ms delay
+  
+  // Update search query when debounced value changes
+  useEffect(() => {
+    setSearchQuery(debouncedSearchTerm);
+    setCurrentPage(1);
+  }, [debouncedSearchTerm]);
+
+  const { data: fleet = { data: [], pagination: { total: 0, totalPages: 1 } }, isLoading, error } = useGetAllFleetQuery({
+    page: currentPage,
+    limit: pageSize,
+    query: searchQuery.trim() || undefined
+  }, {
+    refetchOnMountOrArgChange: true,
+  })
+
+  // console.log(fleet)
+
+  const totalPages = fleet?.pagination?.totalPages || 1
+
+  // Pagination handlers
+  const goToPage = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  const goToPrevious = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1))
+  }
+
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+      // The API will automatically refetch when currentPage changes
+    }
+  }
+  
+  // Extract error message from the error object
+  const errorMessage = (() => {
+    if (!error) return '';
+    
+    // Handle FetchBaseQueryError
+    if ('status' in error) {
+      if (error.status === 403) {
+        // console.log(error)
+        return 'Access denied. You do not have permission to view this resource.';
+      }
+      return typeof error.data === 'object' && error.data && 'message' in error.data
+        ? String(error.data.message)
+        : 'An error occurred while fetching fleet data';
+    }
+    
+    // Handle SerializedError
+    if ('message' in error) {
+      return error.message || 'An unknown error occurred';
+    }
+    
+    return 'Failed to load fleet data. Please try again later.';
+  })();
 
 
   return (
-    <div className="container mx-auto py-8  ">
-        <div className="flex justify-between items-center mb-6">
+    <div className="container mx-auto py-8">
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <p>{errorMessage}</p>
+          {error && ('status' in error) && error.status === 403 && (
+            <p className="mt-2 text-sm">You don&apos;t have permission to view this resource. Please contact your administrator.</p>
+          )}
+        </div>
+      )}
+      
+      <div className="flex justify-between items-center mb-1">
         <h1 className="text-2xl font-bold">Fleet Setup & Configurations</h1>
         <div className="flex gap-2">
-        <Link href="fleet-setup/assign-vehicle" passHref>
-          <Button className="bg-zinc-900 hover:bg-zinc-800">
-            <Plus className="mr-2 h-4 w-4" /> Assign Vehicle
-          </Button>
-        </Link>
-        
-        <Link href="fleet-setup/maintenance-schedule" passHref>
-          <Button className="bg-zinc-900 hover:bg-zinc-800">
-             <Plus className="mr-2 h-4 w-4" /> Add New Schedule
-          </Button>
-        </Link>
+          <Link href="fleet-setup/assign-vehicle" passHref>
+            <Button className="bg-zinc-900 hover:bg-zinc-800" >
+              <Plus className="mr-2 h-4 w-4" /> Assign Vehicle
+            </Button>
+          </Link>
+          
+          <Link href="fleet-setup/maintenance-schedule" passHref>
+            <Button className="bg-zinc-900 hover:bg-zinc-800">
+              <Plus className="mr-2 h-4 w-4" /> Add New Schedule
+            </Button>
+          </Link>
       
-
+        
         </div>
         
       </div>
 
-<div className="container mx-auto py-8 space-y-8">
-      {/* Metrics Cards */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {metrics.map((metric, index) => (
-          <Card key={index} className="border border-gray-200">
-            <CardContent className="p-6">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div> */}
-
-    
-      {/* <div className="space-y-6">
-        <div className="border-b border-gray-200 pb-2">
-          <h2 className="text-xl font-semibold text-gray-900">Recently Added Vehicles</h2>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {recentVehicles.map((vehicle) => (
-            <Card key={vehicle.id} className="border border-gray-200 overflow-hidden">
-              <div className="bg-gray-100 p-4">
-                <img
-                  src={vehicle.image || "/placeholder.svg"}
-                  alt={vehicle.name}
-                  className="w-full h-40 object-cover rounded-md"
-                />
-              </div>
-              <CardContent className="p-4">
-                <p className="text-sm font-medium text-gray-900">
-                  {vehicle.name} - {vehicle.year} - {vehicle.code}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div> */}
+<div className="container mx-auto py-3 space-y-8">
+      
     </div>
 
     <div>
@@ -129,24 +143,99 @@ export default function FleetSetupPage() {
     <div className="flex justify-center items-center h-64">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
     </div>
-  ) : fleet?.length === 0 ? (
+  ) : fleet?.data?.length === 0 ? (
     // Empty state
     <div className="flex flex-col items-center justify-center h-64 text-center">
       <FileSearch className="w-12 h-12 text-gray-400 mb-4" />
       <p className="text-lg font-medium text-gray-600 mb-2">
-        You do not have any registered vehicles yet
+        {searchQuery 
+          ? `No vehicles found matching "${searchQuery}"`
+          : "You do not have any registered vehicles yet"
+        }
       </p>
       <p className="text-gray-500 mb-4">
-        Click the button to start adding vehicles
+        {searchQuery 
+          ? "Try adjusting your search or clear the search to see all vehicles"
+          : "Click the button to start adding vehicles"
+        }
       </p>
-      <Button className="bg-black text-white hover:bg-gray-800">
-        <Plus className="mr-2 h-4 w-4" />
-        Add Vehicle
-      </Button>
+      {searchQuery ? (
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            setSearchInput('');
+            setSearchQuery('');
+          }}
+        >
+          Clear search
+        </Button>
+      ) : (
+        <Button 
+          className="bg-black text-white hover:bg-gray-800" 
+          onClick={() => setIsModalOpen(true)}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add Vehicle
+        </Button>
+      )}
     </div>
   ) : (
     // Data table
+    
     <div className="bg-white rounded-lg overflow-hidden ">
+      <div className="mb-6">
+      <Card className="bg-white">
+        <CardContent className="p-6 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input 
+              placeholder="Search by make, model, or registration..." 
+              className="pl-10 bg-gray-50 border-gray-200"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
+{/* 
+          <div className="flex gap-4">
+            <Select>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Status" />
+                
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Customer Type" />
+                
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="logistics">Logistics</SelectItem>
+                <SelectItem value="transport">Transport</SelectItem>
+                <SelectItem value="distributor">Distributor</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Location" />
+                
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="lagos">Lagos</SelectItem>
+                <SelectItem value="abuja">Abuja</SelectItem>
+                <SelectItem value="kano">Kano</SelectItem>
+              </SelectContent>
+            </Select>
+          </div> */}
+        </CardContent>
+      </Card>
+      </div>
       {/* Table Header */}
       <div className="bg-black text-white px-4 py-3 grid grid-cols-6 gap-4">
         <div className="flex items-center">
@@ -162,7 +251,7 @@ export default function FleetSetupPage() {
 
       {/* Table Body */}
       <div>
-        {fleet?.map((vehicle: Vehicle) => {
+        {fleet?.data?.map((vehicle: Vehicle) => {
           const getNextMaintenanceDate = () => {
             if (!vehicle.maintenanceSchedule?.length) return null;
 
@@ -226,16 +315,46 @@ export default function FleetSetupPage() {
         })}
       </div>
 
-      <div className="flex justify-center mt-4 mb-6">
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" className="h-8 w-8">
-            &lt;
+      <div className="flex items-center justify-between mt-4">
+        <div className="text-sm text-gray-700">
+          Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, fleet?.pagination?.total || 0)} of {fleet?.pagination?.total || 0} entries
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToPrevious}
+            disabled={currentPage === 1}
+            className="px-3 bg-transparent"
+          >
+            Previous
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8 bg-black text-white hover:bg-black/90">
-            1
-          </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8">
-            &gt;
+
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={currentPage === page ? "default" : "outline"}
+                size="sm"
+                onClick={() => goToPage(page)}
+                className={`w-8 h-8 p-0 ${
+                  currentPage === page ? "bg-black text-white hover:bg-gray-800" : "hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </Button>
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToNext}
+            disabled={currentPage === totalPages}
+            className="px-3 bg-transparent"
+          >
+            Next
           </Button>
         </div>
       </div>
@@ -243,8 +362,7 @@ export default function FleetSetupPage() {
   )}
 </div>
     
-
-     
+<AddVehicleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   )
 }

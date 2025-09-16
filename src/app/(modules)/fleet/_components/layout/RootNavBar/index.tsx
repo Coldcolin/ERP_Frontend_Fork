@@ -1,7 +1,7 @@
 "use client"
 import UserDropdown from '@/components/app/UserDropDown'
-import { Input } from '@/components/ui/input'
-import { Bell, HelpCircle, Search } from 'lucide-react'
+// import { Input } from '@/components/ui/input'
+import { Bell, HelpCircle} from 'lucide-react'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store'
@@ -11,12 +11,12 @@ const RootNavBar = () => {
   return (
     <div className="flex items-center justify-between  py-4 ">
     <div className="relative w-full max-w-md">
-      <Input
+      {/* <Input
         type="text"
         placeholder="Search Fleet"
         className="pl-4 pr-10 py-2 rounded-md bg-white border-gray-200"
-      />
-      <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
+      /> */}
+      {/* <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" /> */}
     </div>
     <div className="flex items-center gap-4">
       <div className="relative">

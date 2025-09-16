@@ -58,14 +58,15 @@ export default function AssignVehicle() {
       purpose: "",
     },
   })
+  
 
   // Mock data - replace with actual data from your API
-  const vehicles = fleetData?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
+  const vehicles = fleetData?.data?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
     id: vehicle._id,
     name: `${vehicle.make} ${vehicle.model} - ${vehicle.plateNumber}`
   })) || []
 
-  const drivers = driverData?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
+  const drivers = driverData?.data?.map((driver: { _id: string; personalInfo: { name: string } }) => ({
     id: driver._id,
     name: `${driver?.personalInfo?.name}`,
     // license: driver.licenseNumber
@@ -125,7 +126,7 @@ export default function AssignVehicle() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 className="text-xl font-semibold">Assign a vehicle</h1>

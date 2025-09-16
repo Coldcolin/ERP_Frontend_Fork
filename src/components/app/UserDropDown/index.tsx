@@ -26,7 +26,7 @@ function UserDropdown({ userName, avatarFallback, position = 'top' , className }
 
     const handleLogout = () => {
       dispatch(logout());
-      router.push('/login');
+      router.prefetch('/login');
       setIsOpen(false);
     };
   

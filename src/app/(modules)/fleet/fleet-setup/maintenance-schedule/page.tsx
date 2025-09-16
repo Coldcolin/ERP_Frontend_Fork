@@ -58,7 +58,7 @@ export default function MaintenanceSchedule() {
     },
   })
 
-  const vehicles = vehiclesData?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
+  const vehicles = vehiclesData?.data?.map((vehicle: { _id: string; make: string; model: string; plateNumber: string }) => ({
     id: vehicle._id, // or vehicle.id depending on your API response
     name: `${vehicle.make} ${vehicle.model} - ${vehicle.plateNumber}`
   })) || []

@@ -73,7 +73,7 @@ export default function VehicleDashboard() {
             </tr>
           </thead>
           <tbody>
-            {allVehicles?.map((vehicle: FleetVehicle, index: number) => (
+            {allVehicles?.data?.map((vehicle: FleetVehicle, index: number) => (
               <tr key={vehicle._id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                 <td className="p-3">
                   <input type="checkbox" className="rounded" />

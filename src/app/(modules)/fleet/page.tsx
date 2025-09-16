@@ -85,7 +85,7 @@ const Fleet = () => {
                       </p>
                     </div>
                     <div className="w-full h-32">
-                     {isLoading? <div>Loading...</div>: <ResponsiveContainer width="100%" height="100%">
+                     {isLoading? <div className='px-3'>Loading...</div>: <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={mileageInfo?.monthly}>
                           <Tooltip />
                           <Area
@@ -120,7 +120,7 @@ const Fleet = () => {
                       </p>
                     </div>
                     <div className="w-full h-32">
-                      <ResponsiveContainer width="100%" height="100%">
+                      {isLoading? <div className='px-3'>Loading...</div>: <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={fuelExpenseInfo?.monthlyBreakdown}>
                           <Tooltip />
                           <Area
@@ -136,7 +136,7 @@ const Fleet = () => {
                           </linearGradient>
                         </defs>
                         </AreaChart>
-                      </ResponsiveContainer>
+                      </ResponsiveContainer>}
                     </div>
                   </div>
             </div>

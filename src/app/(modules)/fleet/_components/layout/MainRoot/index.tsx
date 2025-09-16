@@ -29,7 +29,7 @@ type ProductRootProps = {
 
 function MainRoot({ children, navigation }: ProductRootProps) {
     return (
-        <div className="flex h-screen">  
+        <div className="flex max-h-screen h-screen overflow-hidden">  
         {/* DESKTOP sidebar */}
         <div className="hidden lg:block h-screen sticky top-0">
             <RootSidebarDesktop navigation={navigation} adminNav={[]}/>
@@ -40,11 +40,11 @@ function MainRoot({ children, navigation }: ProductRootProps) {
         
         {/* Main content */}
         <div className="flex flex-col px-8 flex-grow h-screen">
-        <div className="sticky top-0 w-full z-10 ">
+        <div className="sticky top-0 w-full z-10 bg-white">
               <RootNavBar />
               {/* <RootTabNavBar /> */}
             </div>
-            <main className="flex-grow overflow-y-auto  px-1">
+            <main className="flex-1 overflow-y-auto px-1">
                 {children}
             </main>
         </div>

@@ -55,6 +55,7 @@ interface Driver {
 const DriverManagement = () => {
     const [isAddDriverModalOpen, setIsAddDriverModalOpen] = useState(false)  
     const { data: drivers = [], isLoading } = useGetAllDriverQuery({})
+    // console.log(drivers)
 
     const formatDriverDate = (dateString: string) => {
       try {

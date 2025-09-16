@@ -169,11 +169,13 @@ export default function InviteUserPage() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Sales Fleet">Fleet Management</SelectItem>
-                      <SelectItem value="HR & Admin">HR Department</SelectItem>
+                      <SelectItem value="Fleet">Fleet Management</SelectItem>
+                      {/* <SelectItem value="HR & Admin">HR Department</SelectItem> */}
                       <SelectItem value="Finance">Finance</SelectItem>
-                      <SelectItem value="Courier">Courier</SelectItem>
-                      <SelectItem value="Customer service & Pricing">Customer service & Pricing</SelectItem>
+                      <SelectItem value="Logistics">Logistics</SelectItem>
+                      <SelectItem value="CRM">CRM</SelectItem>
+                      <SelectItem value="Air & Sea Operations">Air & Sea Operations</SelectItem>
+                      <SelectItem value="Pricing & Quotation">Pricing & Quotation</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

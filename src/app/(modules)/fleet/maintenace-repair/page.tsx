@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export default function MaintenanceDashboard() {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 5, 1)) // June 2025
+  // const [currentDate, setCurrentDate] = useState(new Date(2025, 5, 1)) // June 2025
   const [searchFleet, setSearchFleet] = useState("")
-  const [searchParts, setSearchParts] = useState("")
+  const router = useRouter()
+  // const [searchParts, setSearchParts] = useState("")
 
   // Mock data
   const maintenanceData = [
@@ -60,20 +62,20 @@ export default function MaintenanceDashboard() {
     },
   ]
 
-  const sparePartsData = [
-    {
-      name: "Oil Filter",
-      status: "Sufficient",
-      qtyInStock: 26,
-      lastUsed: "02-05-25",
-    },
-    {
-      name: "Engine Belt",
-      status: "Out of stock",
-      qtyInStock: 3,
-      lastUsed: "31-05-25",
-    },
-  ]
+  // const sparePartsData = [
+  //   {
+  //     name: "Oil Filter",
+  //     status: "Sufficient",
+  //     qtyInStock: 26,
+  //     lastUsed: "02-05-25",
+  //   },
+  //   {
+  //     name: "Engine Belt",
+  //     status: "Out of stock",
+  //     qtyInStock: 3,
+  //     lastUsed: "31-05-25",
+  //   },
+  // ]
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -90,56 +92,56 @@ export default function MaintenanceDashboard() {
     }
   }
 
-  const getPartsStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "sufficient":
-        return "bg-green-100 text-green-800"
-      case "out of stock":
-        return "bg-red-100 text-red-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  // const getPartsStatusColor = (status: string) => {
+  //   switch (status.toLowerCase()) {
+  //     case "sufficient":
+  //       return "bg-green-100 text-green-800"
+  //     case "out of stock":
+  //       return "bg-red-100 text-red-800"
+  //     default:
+  //       return "bg-gray-100 text-gray-800"
+  //   }
+  // }
 
   // Calendar generation
-  const generateCalendar = () => {
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - firstDay.getDay())
+  // const generateCalendar = () => {
+  //   const year = currentDate.getFullYear()
+  //   const month = currentDate.getMonth()
+  //   const firstDay = new Date(year, month, 1)
+  //   const startDate = new Date(firstDay)
+  //   startDate.setDate(startDate.getDate() - firstDay.getDay())
 
-    const days = []
-    const current = new Date(startDate)
+  //   const days = []
+  //   const current = new Date(startDate)
 
-    for (let i = 0; i < 42; i++) {
-      days.push(new Date(current))
-      current.setDate(current.getDate() + 1)
-    }
+  //   for (let i = 0; i < 42; i++) {
+  //     days.push(new Date(current))
+  //     current.setDate(current.getDate() + 1)
+  //   }
 
-    return days
-  }
+  //   return days
+  // }
 
-  const scheduledDates = [10, 14, 17, 25, 26] // Mock scheduled dates
+  // const scheduledDates = [10, 14, 17, 25, 26] // Mock scheduled dates
 
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
+  // const monthNames = [
+  //   "January",
+  //   "February",
+  //   "March",
+  //   "April",
+  //   "May",
+  //   "June",
+  //   "July",
+  //   "August",
+  //   "September",
+  //   "October",
+  //   "November",
+  //   "December",
+  // ]
 
-  const navigateMonth = (direction: number) => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
-  }
+  // const navigateMonth = (direction: number) => {
+  //   setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -147,7 +149,7 @@ export default function MaintenanceDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-900">Maintenance & Repairs</h1>
-          <Button className="bg-slate-800 hover:bg-slate-700">
+          <Button className="bg-slate-800 hover:bg-slate-700 cursor-pointer" onClick={() => router.push("/fleet/maintenace-repair/new")}>
             <Plus className="h-4 w-4 mr-2" />
             Add new schedule
           </Button>
@@ -155,7 +157,7 @@ export default function MaintenanceDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card  className="border-b-2 border-t-0 border-r-0 border-l-0 rounded-none border-[#4759FF]" >
@@ -320,7 +322,7 @@ export default function MaintenanceDashboard() {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Upcoming Scheduled Tasks */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Upcoming Scheduled Tasks</CardTitle>
@@ -383,10 +385,10 @@ export default function MaintenanceDashboard() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Spare Parts Stock */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Spare Parts Stock</CardTitle>
@@ -434,7 +436,7 @@ export default function MaintenanceDashboard() {
                   </div>
                 ))}
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>
