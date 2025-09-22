@@ -15,10 +15,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import TableOptions from '@/components/app/TableOptions'
 import ViewEditProfileModal from './_components/ViewEditProfileModal'
-import { User, UserRoundPen, Key, CloudDownload, Trash2 } from 'lucide-react';
+import { User, UserRoundPen, Key, Trash2 } from 'lucide-react';
 import DeleteConfirmatioNodal from '@/components/app/DeleteConfirmatioNodal'
-import { useGetAllUserQuery } from "@/lib/redux/api/userApi"
-import { Spinner } from "@/components/ui/spinner"
+import { useDeleteUserMutation, useGetAllUserQuery } from "@/lib/redux/api/userApi"
+// import { Spinner } from "@/components/ui/spinner"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Define AppUser type based on properties used
@@ -45,13 +45,13 @@ const [userToDelete, setUserToDelete] = useState<AppUser | null>(null)
 const router = useRouter();
 
 const { data: users, isLoading } = useGetAllUserQuery({});
+const [deleteUser] = useDeleteUserMutation();
 
 console.log("user data",users)
 const handleDeleteUser = () => {
   if (userToDelete) {
-    console.log(`Deleting user with ID: ${userToDelete.id}`)
-    // Perform the delete operation (e.g., API call)
-    // Example: await deleteUser(userToDelete.id);
+    // console.log(`Deleting user with ID: ${userToDelete._id}`)
+    deleteUser(userToDelete._id);
     setIsDialogOpen(false) // Close the dialog after deletion
     setUserToDelete(null) // Reset the userToDelete state
   }
@@ -156,8 +156,8 @@ const handleDeleteUser = () => {
                 </div>
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-8">
-                    <Spinner size="lg" className="mb-4" />
-                    <p className="text-sm text-gray-500">Loading users...</p>
+                    {/* <Spinner size="lg" className="mb-4" /> */}
+                    {/* <p className="text-sm text-gray-500">Loading users...</p> */}
                     <div className="w-full px-6 py-4 space-y-4 mt-4">
                       {[...Array(5)].map((_, index) => (
                         <div key={index} className="grid grid-cols-12 items-center gap-4">
@@ -249,14 +249,14 @@ const handleDeleteUser = () => {
                             },
                             icon: <Key  className="h-4 w-4 cursor-pointer" />,
                           },
-                          {
-                            label: "Export details",
-                            onClick: () => {
-                            console.log('Eport details');
-                            },
-                            icon: <CloudDownload  className="h-4 w-4 cursor-pointer" />,
+                          // {
+                          //   label: "Export details",
+                          //   onClick: () => {
+                          //   console.log('Eport details');
+                          //   },
+                          //   icon: <CloudDownload  className="h-4 w-4 cursor-pointer" />,
 
-                          },
+                          // },
                           {
                             label: "Delete User",
                             onClick: () => {
@@ -287,8 +287,8 @@ const handleDeleteUser = () => {
                 </div>
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-8">
-                    <Spinner size="lg" className="mb-4" />
-                    <p className="text-sm text-gray-500">Loading active users...</p>
+                    {/* <Spinner size="lg" className="mb-4" /> */}
+                    {/* <p className="text-sm text-gray-500">Loading active users...</p> */}
                     <div className="w-full px-6 py-4 space-y-4 mt-4">
                       {[...Array(3)].map((_, index) => (
                         <div key={index} className="grid grid-cols-12 items-center gap-4">
@@ -369,13 +369,13 @@ const handleDeleteUser = () => {
                                 },
                                 icon: <Key  className="h-4 w-4" />,
                               },
-                              {
-                                label: "Export details",
-                                onClick: () => {
-                                console.log('Eport details');
-                                },
-                                icon: <CloudDownload  className="h-4 w-4" />,
-                              },
+                              // {
+                              //   label: "Export details",
+                              //   onClick: () => {
+                              //   console.log('Eport details');
+                              //   },
+                              //   icon: <CloudDownload  className="h-4 w-4" />,
+                              // },
                               {
                                 label: "Delete User",
                                 onClick: () => {
@@ -405,8 +405,8 @@ const handleDeleteUser = () => {
                 </div>
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center py-8">
-                    <Spinner size="lg" className="mb-4" />
-                    <p className="text-sm text-gray-500">Loading inactive users...</p>
+                    {/* <Spinner size="lg" className="mb-4" /> */}
+                    {/* <p className="text-sm text-gray-500">Loading inactive users...</p> */}
                     <div className="w-full px-6 py-4 space-y-4 mt-4">
                       {[...Array(2)].map((_, index) => (
                         <div key={index} className="grid grid-cols-12 items-center gap-4">
@@ -489,13 +489,13 @@ const handleDeleteUser = () => {
                                 },
                                 icon: <Key  className="h-4 w-4" />,
                               },
-                              {
-                                label: "Export details",
-                                onClick: () => {
-                                console.log('Eport details');
-                                },
-                                icon: <CloudDownload  className="h-4 w-4" />,
-                              },
+                              // {
+                              //   label: "Export details",
+                              //   onClick: () => {
+                              //   console.log('Eport details');
+                              //   },
+                              //   icon: <CloudDownload  className="h-4 w-4" />,
+                              // },
                               {
                                 label: "Delete User",
                                 onClick: () => {
