@@ -39,6 +39,7 @@ type UserManagementModuleProps = {
 
 // List of all available permissions
 const allPermissions = [
+  "view_fleet",
   "add_driver",
   "edit_driver",
   "delete_driver",
@@ -108,7 +109,7 @@ export default function UserManagementModule({ params }: UserManagementModulePro
   const router = useRouter();
   
   // Fetch user data using the id from params
-  const { data: userData, isLoading, isError } = useGetSingleUserQuery(userId);
+  const { data: userData, isLoading, isError, refetch } = useGetSingleUserQuery(userId);
   
   // Grant permissions mutation
   const [grantPermissions, { isLoading: isUpdating }] = useGrantPermissionsMutation();
@@ -161,29 +162,40 @@ export default function UserManagementModule({ params }: UserManagementModulePro
 
   const handleUpdate = async () => {
     try {
-      // Get the list of enabled permissions
-      // const enabledPermissions = Object.entries(permissions)
-      //   .filter(([isEnabled]) => isEnabled)
-      //   .map(([permission]) => permission);
-      
-      // console.log(`Updating permissions for user ${userId}:`, enabledPermissions);
-      
+      // Only send checked permissions
+      const enabledPermissions = Object.entries(permissions)
+        .filter(([, isEnabled]) => isEnabled)
+        .map(([permission]) => permission);
+
+      console.log(`Updating permissions for user ${userId}:`, enabledPermissions);
+
       // Call the API to update the user's permissions
-      // const result = await grantPermissions({
-      //   id: userId,
-      //   permissions: enabledPermissions
-      // }).unwrap();
-      
+      const result = await grantPermissions({
+        id: userId,
+        permissions: enabledPermissions
+      }).unwrap();
+
+      if (!result) {
+        setUpdateStatus({
+          success: false,
+          message: result?.message || 'Failed to update permissions. Please try again.'
+        });
+        refetch();
+        return;
+      }
+
       setUpdateStatus({
         success: true,
         message: 'Permissions updated successfully!'
       });
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => {
         setUpdateStatus(null);
       }, 3000);
-      
+
+      refetch();
+
     } catch (error) {
       console.error('Failed to update permissions:', error);
       setUpdateStatus({

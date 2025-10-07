@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '@/lib/redux/slices/authSlice';
 import { format } from 'date-fns';
 import { toast } from "sonner"
 
 export default function Dashboard() {
-    const router = useRouter()
+  const router = useRouter()
+  const dispatch = useDispatch();
   const [selectedModule, setSelectedModule] = useState("")
   const [showUnavailable, setShowUnavailable] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -19,6 +21,14 @@ export default function Dashboard() {
   const isAuthenticated = useSelector((state: any) => state.auth.token)
   
   const isUser = useSelector((state: any) => state.auth.user)
+
+  // Logout handler for footer link
+  const handleLogout = () => {
+    if (isAuthenticated) {
+      dispatch(logout());
+      router.push('/login');
+    }
+  }
 
   const currentDate = new Date();
   const formattedDateTime = format(currentDate, "EEEE, MMMM d, yyyy, h:mm a 'WAT'")
@@ -29,38 +39,40 @@ export default function Dashboard() {
       // Set loading state first
       setIsLoading(true);
       setButtonText("Loading...");
-      
+
       // Force a re-render to show the loading state
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
+
       if (!isAuthenticated) {
         router.push('/login');
-        setButtonText("Get Started");
+        // Don't reset loading state here, let navigation handle it
         return;
       }
-  
+
       if (selectedModule === "ADMIN" && !isUser?.isSuperAdmin) {
         toast.error("You don't have permission to access the admin dashboard");
         setButtonText("Get Started");
+        setIsLoading(false);
         return;
       }
-  
+
       if (selectedModule === "FLEET") {
         router.push("/fleet");
-        setButtonText("Get Started");
+        return;
       } else if (selectedModule === "ADMIN") {
         router.push("/admin");
-        setButtonText("Get Started");
+        return;
       } else if (selectedModule) {
         setShowUnavailable(true);
         setButtonText("Get Started");
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Navigation error:", error);
       toast.error("An error occurred during navigation");
       setButtonText("Get Started");
-    } finally {
-      // Reset loading state
       setIsLoading(false);
     }
   };
@@ -175,9 +187,9 @@ export default function Dashboard() {
             Help & Support
           </Link>{" "}
           |
-          <Link href="#" className="hover:text-white ml-2">
+          <button type="button" onClick={handleLogout} className="hover:text-white ml-2 bg-transparent border-none outline-none p-0 cursor-pointer">
             Logout
-          </Link>
+          </button>
         </div>
         <div>© DreamWork Global Logistics LTD. 2025</div>
       </footer>
