@@ -5,9 +5,12 @@ import { useState,useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
+import { useUpdateUserMutation } from "@/lib/redux/api/userApi"
+import { toast } from "sonner"
 import * as z from "zod"
 
 // Add form schema
@@ -21,7 +24,8 @@ const formSchema = z.object({
 
 
 type ModalUser = {
-  id: string
+  id?: string
+  _id?: string
   firstName: string
   lastName: string
   email: string
@@ -50,9 +54,26 @@ interface ViewEditProfileModalProps {
     },
   })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("Updated user data:", data)
-    setIsEditing(false)
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+   
+      const userId = (user as any).id ?? (user as any)._id
+      if (!userId) {
+        toast.error('Missing user id — cannot update')
+        return
+      }
+   
+      await updateUser({ id: userId, data }).unwrap()
+      toast.success('User updated successfully')
+      setIsEditing(false)
+      
+      onClose()
+    } catch (err: unknown) {
+      console.error('Update user error:', err)
+      toast.error((err as any)?.data?.message || (err as any)?.message || 'Failed to update user')
+    }
   }
   
   useEffect(() => {
@@ -105,11 +126,30 @@ interface ViewEditProfileModalProps {
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
-            <Input {...form.register("email")} type="email" readOnly={!isEditing} className={!isEditing ? "bg-gray-50" : ""} />
+            <Input {...form.register("email")} type="email" readOnly={true} className={!isEditing ? "bg-gray-50" : ""} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="department">Department <span className="text-red-500">*</span></Label>
-            <Input {...form.register("department")} readOnly={!isEditing} className={!isEditing ? "bg-gray-50" : ""} />
+            <Controller
+              control={form.control}
+              name="department"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="h-12 rounded-md border-gray-300 w-full" disabled={!isEditing}>
+                    <SelectValue placeholder="- Select department -" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Fleet">Fleet Management</SelectItem>
+                    {/* <SelectItem value="HR & Admin">HR Department</SelectItem> */}
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Logistics">Logistics</SelectItem>
+                    <SelectItem value="CRM">CRM</SelectItem>
+                    <SelectItem value="Air & Sea Operations">Air & Sea Operations</SelectItem>
+                    <SelectItem value="Pricing & Quotation">Pricing & Quotation</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="phoneNo">Phone No. <span className="text-red-500">*</span></Label>
@@ -117,8 +157,15 @@ interface ViewEditProfileModalProps {
           </div>
           <div className="pt-4">
             {isEditing ? (
-              <Button type="submit" className="w-full">
-                Save Changes
+              <Button type="submit" className="w-full" disabled={isUpdating}>
+                {isUpdating ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Saving...
+                  </div>
+                ) : (
+                  'Save Changes'
+                )}
               </Button>
             ) : (
               <Button type="button" onClick={handleEditClick} className="w-full">

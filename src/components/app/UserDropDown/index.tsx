@@ -2,8 +2,8 @@
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import {
-    Settings, 
-    User,
+    // Settings, 
+    // User,
     LogOut,
     ChevronDown,
   } from "lucide-react"
@@ -50,14 +50,14 @@ function UserDropdown({ userName, avatarFallback, position = 'top' , className }
           <div  className={`absolute ${position === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} left-0 w-full overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg`}>
             <div className="p-2">
               <div className="mb-2 px-3 py-1 text-xs font-medium text-gray-500">admin@dreamworks.com</div>
-              <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              {/* <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <User className="h-4 w-4" />
                 Profile
-              </button>
-              <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              </button> */}
+              {/* <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 <Settings className="h-4 w-4" />
                 Settings
-              </button>
+              </button> */}
               <div className="my-1 border-t border-gray-100"></div>
               <button onClick={handleLogout} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50">
                 <LogOut className="h-4 w-4" />

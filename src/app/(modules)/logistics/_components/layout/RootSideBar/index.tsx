@@ -3,12 +3,10 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-// import UserDropdown from '@/components/app/UserDropDown';
-import { Plus  } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { AddVehicleModal } from '../../AddVechicleModal';
 import Link from 'next/link';
-// import { AddMenu } from '../AddMenu';
+import CreateOrderModal from '../../CreateOrderModal';
 
 type NavItem = {
   label: string;
@@ -25,17 +23,18 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
   navigation
 }) => {
   const pathname = usePathname();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
     <div className="lg:z-30 lg:flex hidden lg:flex-col h-screen w-76 bg-gray-50">
       <div className="flex flex-col gap-y-2 border-r border-gray-200 bg-grey-50 px-2 py-2 h-full">
-        <div className="flex  h-auto shrink-0 items-center justify-center">
-        <div className="h-24 w-full flex justify-center items-center bg-white cursor-pointer" onClick={() => router.push('/')}> 
+        <div className="flex h-auto shrink-0 items-center justify-center">
+          <div className="h-24 w-full flex justify-center items-center bg-white cursor-pointer" onClick={() => router.push('/')}> 
             <Image
               src="/assets/images/cover.png"
               className="object-contain h-full w-auto"
-              alt="Proteux Logo"
+              alt="DreamWorks Logo"
               width={208}
               height={100}
               priority
@@ -44,25 +43,22 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
         </div>
 
         <Button
-          onClick={() => setIsModalOpen(true)}
-         variant="default"
-         size="sm"
-         className='h-12'
+          onClick={() => setIsCreateModalOpen(true)}
+          variant="default"
+          size="sm"
+          className='h-12 bg-[#0F172A] hover:bg-[#1e293b]'
         >
           <Plus className={`h-5 w-5 transition-transform`} />
           <div className="flex items-center">
-            <span className="text-sm font-medium ">Add vehicle</span>
+            <span className="text-sm font-medium">Create Order</span>
           </div>
-    
         </Button>
-        <AddVehicleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
 
         {/* Main Navigation */}
         <nav className="flex flex-col flex-1 mt-5 min-h-0">
           <ul className="flex flex-col gap-y-4 overflow-y-auto">
             {navigation?.map((item, index) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <li
                   key={`desktop-navigation-${index}`}
@@ -88,22 +84,13 @@ const RootSidebarDesktop: React.FC<RootSidebarDesktopProps> = ({
 
         {/* Admin Navigation */}
         <nav className="flex flex-col mt-auto">
-        {/* <Button
-          // onClick={() => setIsOpen(!isOpen)}
-         variant="default"
-         size="sm"
-          className='h-12 w-30'
-        >
-          <MessageCircle className={`h-5 w-5 transition-transform`} />
-
-          <div className="flex items-center">
-            
-            <span className="text-sm font-medium">help</span>
-          </div>
-    
-        </Button> */}
         </nav>
       </div>
+
+      <CreateOrderModal 
+        open={isCreateModalOpen} 
+        onOpenChange={setIsCreateModalOpen} 
+      />
     </div>
   );
 };
