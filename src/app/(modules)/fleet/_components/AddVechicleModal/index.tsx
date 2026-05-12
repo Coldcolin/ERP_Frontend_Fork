@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Car } from "lucide-react";
+import { Car, Plus, X } from "lucide-react";
 import { useForm, type Control, type SubmitHandler, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -22,9 +22,15 @@ export enum Department {
     CRM = "CRM",
     AIR_SEA_OPERATIONS = "Air & Sea Operations",
     PRICING_QUOTATION = "Pricing & Quotation",
+    SALES = "Sales",
 }
 
 const noSpace = (val: string) => !/\s/.test(val);
+
+const additionalDocumentSchema = z.object({
+  name: z.string().min(1, "Document name is required"),
+  file: z.instanceof(File, { message: "Document file is required" }),
+});
 
 const vehicleSchema = z.object({
     vehicleName: z.string().min(2, "Vehicle name is required"),
@@ -42,6 +48,7 @@ const vehicleSchema = z.object({
     currentDriver: z.string().min(1, "Current driver is required"),
     insurance: z.instanceof(File).optional(),
     RoadWorthines: z.instanceof(File).optional(),
+    additionalDocuments: z.array(additionalDocumentSchema).default([]),
   });
 
   type VehicleFormValues = z.infer<typeof vehicleSchema>;
@@ -80,6 +87,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
         RoadWorthines_expiryDate: "",
         insurance: undefined,
         RoadWorthines: undefined,
+        additionalDocuments: [],
       },
     });
 
@@ -90,7 +98,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
         try {
             setIsLoading(true);
             const formData = new FormData();
-            
+
             // Add all text fields
             formData.append('make', data.vehicleName);
             formData.append('model', data.vehicleModel);
@@ -110,6 +118,12 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
             formData.append('insurance_expiryDate', data.insurance_expiryDate);
             formData.append('RoadWorthines_issueDate', data.RoadWorthines_issueDate);
             formData.append('RoadWorthines_expiryDate', data.RoadWorthines_expiryDate);
+
+            // Add additional documents with their names
+            data.additionalDocuments?.forEach((doc, index) => {
+              formData.append(`additionalDocuments[${index}][name]`, doc.name);
+              formData.append(`additionalDocuments[${index}][file]`, doc.file);
+            });
 
             await createFleet(formData).unwrap();
             toast.success('Vehicle added successfully');
@@ -177,7 +191,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center">
-                      Registration
+                      Chassis Number
                       <span className="text-red-500 ml-1">*</span>
                     </FormLabel>
                     <FormControl>
@@ -389,7 +403,7 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                       />
 
 
-<FormField
+              <FormField
                 control={control}
                 name="insurance"
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -442,7 +456,88 @@ export function AddVehicleModal({ isOpen, onClose }: AddVehicleModalProps) {
                   </FormItem>
                 )}
               />
-            
+
+              {/* Additional Documents Section */}
+              <div className="md:col-span-3 space-y-4">
+                <div className="flex items-center justify-between">
+                  <FormLabel className="text-base font-medium">Additional Documents</FormLabel>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => form.setValue('additionalDocuments', [...(form.watch('additionalDocuments') || []), { name: '', file: undefined as unknown as File }])}
+                    className="flex items-center gap-1"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Document
+                  </Button>
+                </div>
+
+                {form.watch('additionalDocuments')?.map((_, index) => (
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg bg-slate-50/50 relative">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const current = form.watch('additionalDocuments') || [];
+                        form.setValue('additionalDocuments', current.filter((_, i) => i !== index));
+                      }}
+                      className="absolute top-2 right-2 h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+
+                    <FormField
+                      control={control}
+                      name={`additionalDocuments.${index}.name` as const}
+                      render={({ field }) => (
+                        <FormItem className="md:col-span-1">
+                          <FormLabel className="flex items-center">
+                            Document Name
+                            <span className="text-red-500 ml-1">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g., Vehicle License"
+                              className="bg-white"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={control}
+                      name={`additionalDocuments.${index}.file` as const}
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      render={({ field: { value, onChange, ...field } }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel className="flex items-center">
+                            Document File
+                            <span className="text-red-500 ml-1">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*,.pdf"
+                              className="bg-white"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) onChange(file);
+                              }}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex justify-end">

@@ -62,6 +62,9 @@ export default function Dashboard() {
       } else if (selectedModule === "ADMIN") {
         router.push("/admin");
         return;
+      } else if (selectedModule === "LOGISTICS") {
+        router.push("/logistics");
+        return;
       } else if (selectedModule) {
         setShowUnavailable(true);
         setButtonText("Get Started");
